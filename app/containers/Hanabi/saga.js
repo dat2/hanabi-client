@@ -5,6 +5,7 @@ import {
   call,
   fork,
   put,
+  select,
   take,
   takeEvery,
 } from 'redux-saga/effects';
@@ -15,6 +16,7 @@ import shuffle from 'shuffle-array';
 
 import { SEND_CHAT_MESSAGE, SYNC_ACTION, START_GAME } from './constants';
 import { initializeGame, receiveChatMessage } from './actions';
+import { selectPlayers } from './selectors';
 
 function createSocketChannel(socket, channel) {
   return eventChannel((emit) => {
@@ -75,12 +77,32 @@ function generateDeck() {
   );
 }
 
+function getNumCardsPerPlayer(numPlayers) {
+  if (numPlayers === 2 || numPlayers === 3) {
+    return 5;
+  } else if (numPlayers === 4 || numPlayers === 5) {
+    return 4;
+  }
+  return null;
+}
+
 function* handleStartGame() {
-  const deck = yield call(generateDeck);
-  const shuffled = yield call(shuffle, deck, { copy: true });
+  const newDeck = yield call(generateDeck);
+  const shuffledDeck = yield call(shuffle, newDeck, { copy: true });
+
+  const players = yield select(selectPlayers);
+  const numCardsPerPlayer = getNumCardsPerPlayer(players.size);
+
+  const deck = R.drop(numCardsPerPlayer * players.size, shuffledDeck);
+  const playerHands = R.map(
+    (i) =>
+      R.take(numCardsPerPlayer, R.drop(i * numCardsPerPlayer, shuffledDeck)),
+    R.range(0, players.size),
+  );
 
   const blob = {
-    deck: shuffled,
+    deck,
+    playerHands,
   };
   yield put(initializeGame(blob));
 }

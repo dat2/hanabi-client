@@ -5,6 +5,7 @@ import { RECEIVE_CHAT_MESSAGE, INITIALIZE_GAME } from './constants';
 const initialState = fromJS({
   messages: [],
   game: null,
+  players: [{ name: 'nick' }, { name: 'bob' }],
 });
 
 function homeReducer(state = initialState, action) {
