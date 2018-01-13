@@ -108,9 +108,12 @@ function* handleStartGame() {
 
   const deck = R.drop(numCardsPerPlayer * players.size, shuffledDeck);
   const playerHands = R.map(
-    (i) =>
-      R.take(numCardsPerPlayer, R.drop(i * numCardsPerPlayer, shuffledDeck)),
-    R.range(0, players.size),
+    R.map((card) => ({ ...card, canSeeColour: false, canSeeNumber: false })),
+    R.map(
+      (i) =>
+        R.take(numCardsPerPlayer, R.drop(i * numCardsPerPlayer, shuffledDeck)),
+      R.range(0, players.size),
+    ),
   );
 
   yield put(initializeGame(deck, playerHands));

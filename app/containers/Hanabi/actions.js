@@ -69,10 +69,10 @@ export function giveNumberInfo(number, playerIndex) {
   });
 }
 
-export function discard() {
+export function discard(cardIndex) {
   return syncAction({
     type: DISCARD,
-    payload: {},
+    payload: { cardIndex },
   });
 }
 

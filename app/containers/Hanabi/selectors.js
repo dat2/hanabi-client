@@ -7,10 +7,21 @@ export const selectMessages = createSelector(selectLocalState, (hanabi) =>
   hanabi.get('messages'),
 );
 
-export const selectPlayers = createSelector(selectLocalState, (hanabi) =>
+const selectPlayerInfo = createSelector(selectLocalState, (hanabi) =>
   hanabi.get('players'),
 );
 
-export const selectPlayerHands = createSelector(selectLocalState, (hanabi) =>
-  hanabi.getIn(['game', 'playerHands'], new Immutable.List()),
+const selectPlayerHands = createSelector(selectLocalState, (hanabi) =>
+  hanabi.get('playerHands', new Immutable.List()),
+);
+
+export const selectPlayers = createSelector(
+  selectPlayerInfo,
+  selectPlayerHands,
+  (players, playerHands) =>
+    players
+      .zipAll(playerHands)
+      .map(([player, hand = new Immutable.Map({})]) =>
+        player.set('hand', hand),
+      ),
 );

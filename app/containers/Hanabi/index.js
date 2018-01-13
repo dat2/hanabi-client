@@ -10,7 +10,7 @@ import Immutable from 'immutable';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import * as Actions from './actions';
-import { selectMessages } from './selectors';
+import { selectMessages, selectPlayers } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
@@ -19,7 +19,11 @@ export function Hanabi({
   setMessage,
   sendChatMessage,
   messages,
+  players,
   startGame,
+  giveColourInfo,
+  giveNumberInfo,
+  discard,
 }) {
   return (
     <article>
@@ -34,6 +38,26 @@ export function Hanabi({
           {messages.map((m) => <li key={m.get('id')}>{m.get('message')}</li>)}
         </ul>
         <button onClick={() => startGame()}>Start game</button>
+        {players.map((player) => (
+          <pre key={player.get('name')}>
+            {JSON.stringify(player.toJS(), null, 2)}
+          </pre>
+        ))}
+        {['white', 'yellow', 'blue', 'red', 'green'].map((colour) => (
+          <button onClick={() => giveColourInfo(colour, 1)}>
+            Give {colour} colour info to player 1
+          </button>
+        ))}
+        {[1, 2, 3, 4, 5].map((number) => (
+          <button onClick={() => giveNumberInfo(number, 1)}>
+            Give {number} number info to player 1
+          </button>
+        ))}
+        {[0, 1, 2, 3, 4].map((cardIndex) => (
+          <button onClick={() => discard(cardIndex)}>
+            Discard {cardIndex}
+          </button>
+        ))}
       </div>
     </article>
   );
@@ -44,16 +68,24 @@ Hanabi.propTypes = {
   message: PropTypes.string.isRequired,
   setMessage: PropTypes.func.isRequired,
   messages: PropTypes.instanceOf(Immutable.List).isRequired,
+  players: PropTypes.instanceOf(Immutable.List).isRequired,
   startGame: PropTypes.func.isRequired,
+  giveColourInfo: PropTypes.func.isRequired,
+  giveNumberInfo: PropTypes.func.isRequired,
+  discard: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = {
   sendChatMessage: Actions.sendChatMessage,
   startGame: Actions.startGame,
+  giveColourInfo: Actions.giveColourInfo,
+  giveNumberInfo: Actions.giveNumberInfo,
+  discard: Actions.discard,
 };
 
 const mapStateToProps = createStructuredSelector({
   messages: selectMessages,
+  players: selectPlayers,
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
