@@ -1,10 +1,11 @@
 import {
   SEND_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGE,
-  SEND_GAME_MESSAGE,
+  SYNC_ACTION,
   START_GAME,
+  INITIALIZE_GAME,
   END_GAME,
-  GIVE_SUIT_INFO,
+  GIVE_COLOUR_INFO,
   GIVE_NUMBER_INFO,
   DISCARD,
   PLAY,
@@ -24,50 +25,57 @@ export function receiveChatMessage(message, id) {
   };
 }
 
-export function sendGameMessage(action) {
+export function syncAction(action) {
   return {
-    type: SEND_GAME_MESSAGE,
+    type: SYNC_ACTION,
     payload: { action },
   };
 }
 
 export function startGame() {
-  return sendGameMessage({
+  return {
     type: START_GAME,
     payload: {},
+  };
+}
+
+export function initializeGame(blob) {
+  return syncAction({
+    type: INITIALIZE_GAME,
+    payload: { blob },
   });
 }
 
 export function endGame() {
-  return sendGameMessage({
+  return syncAction({
     type: END_GAME,
     payload: {},
   });
 }
 
-export function giveSuitInfo(suit, playerIndex) {
-  return sendGameMessage({
-    type: GIVE_SUIT_INFO,
+export function giveColourInfo(suit, playerIndex) {
+  return syncAction({
+    type: GIVE_COLOUR_INFO,
     payload: { suit, playerIndex },
   });
 }
 
 export function giveNumberInfo(number, playerIndex) {
-  return sendGameMessage({
+  return syncAction({
     type: GIVE_NUMBER_INFO,
     payload: { number, playerIndex },
   });
 }
 
 export function discard() {
-  return sendGameMessage({
+  return syncAction({
     type: DISCARD,
     payload: {},
   });
 }
 
 export function play(card) {
-  return sendGameMessage({
+  return syncAction({
     type: PLAY,
     payload: { card },
   });

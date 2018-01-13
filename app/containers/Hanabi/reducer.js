@@ -1,9 +1,10 @@
 import { fromJS } from 'immutable';
 
-import { RECEIVE_CHAT_MESSAGE } from './constants';
+import { RECEIVE_CHAT_MESSAGE, INITIALIZE_GAME } from './constants';
 
 const initialState = fromJS({
   messages: [],
+  game: null,
 });
 
 function homeReducer(state = initialState, action) {
@@ -12,6 +13,8 @@ function homeReducer(state = initialState, action) {
       return state.update('messages', (messages) =>
         messages.push(fromJS(action.payload)),
       );
+    case INITIALIZE_GAME:
+      return state.set('game', fromJS(action.payload.blob));
     default:
       return state;
   }

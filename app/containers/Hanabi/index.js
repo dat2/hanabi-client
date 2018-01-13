@@ -33,7 +33,7 @@ export function Hanabi({
         <ul>
           {messages.map((m) => <li key={m.get('id')}>{m.get('message')}</li>)}
         </ul>
-        <button onClick={() => startGame()}>Send a game message</button>
+        <button onClick={() => startGame()}>Start game</button>
       </div>
     </article>
   );
