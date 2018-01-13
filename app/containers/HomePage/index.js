@@ -10,16 +10,17 @@ import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { createStructuredSelector } from 'reselect';
+import { withState } from 'recompose';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import messages from './messages';
 import { sendMessage } from './actions';
-// import { } from './selectors';
+import { selectMessages } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export function HomePage({ sendMessage }) {
+export function HomePage({ message, setMessage, sendMessage, messages }) {
   return (
     <article>
       <Helmet>
@@ -27,9 +28,15 @@ export function HomePage({ sendMessage }) {
         <meta name="description" content="" />
       </Helmet>
       <div>
-        <button onClick={() => sendMessage('hello world')}>
+        <input value={message} onChange={e => setMessage(e.target.value)} />
+        <button onClick={() => sendMessage(message)}>
           Send message
         </button>
+        <ul>
+        {
+          messages.map((message, index) => <li key={index}>{ message }</li>)
+        }
+        </ul>
       </div>
     </article>
   );
@@ -44,10 +51,10 @@ const mapDispatchToProps = {
 };
 
 const mapStateToProps = createStructuredSelector({
+  messages: selectMessages
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
 const withReducer = injectReducer({ key: 'home', reducer });
 const withSaga = injectSaga({ key: 'home', saga });
 
@@ -55,4 +62,5 @@ export default compose(
   withReducer,
   withSaga,
   withConnect,
+  withState('message', 'setMessage', '')
 )(HomePage);
