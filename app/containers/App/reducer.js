@@ -1,7 +1,6 @@
 import { fromJS } from 'immutable';
 
-const initialState = fromJS({
-});
+const initialState = fromJS({});
 
 function appReducer(state = initialState) {
   return state;

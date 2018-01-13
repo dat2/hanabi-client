@@ -9,7 +9,9 @@ const initialState = fromJS({
 function homeReducer(state = initialState, action) {
   switch (action.type) {
     case RECEIVE_CHAT_MESSAGE:
-      return state.update('messages', (messages) => messages.push(fromJS(action.payload)));
+      return state.update('messages', (messages) =>
+        messages.push(fromJS(action.payload)),
+      );
     default:
       return state;
   }

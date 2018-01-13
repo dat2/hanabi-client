@@ -91,6 +91,7 @@
       "es6": true
     },
     "plugins": [
+      "prettier",
       "redux-saga",
       "react",
       "jsx-a11y"
@@ -142,9 +143,22 @@
       "newline-per-chained-call": 0,
       "no-confusing-arrow": 0,
       "no-console": 1,
-      "no-constant-condition": ["error", { "checkLoops": false }],
+      "no-constant-condition": [
+        "error",
+        {
+          "checkLoops": false
+        }
+      ],
       "no-use-before-define": 0,
       "prefer-template": 2,
+      "prettier/prettier": [
+        2,
+        {
+          "singleQuote": true,
+          "trailingComma": "all",
+          "arrowParens": "always"
+        }
+      ],
       "react/forbid-prop-types": 0,
       "react/jsx-first-prop-new-line": [
         2,
@@ -274,6 +288,7 @@
     "eslint-import-resolver-webpack": "0.8.3",
     "eslint-plugin-import": "2.7.0",
     "eslint-plugin-jsx-a11y": "5.0.3",
+    "eslint-plugin-prettier": "^2.4.0",
     "eslint-plugin-react": "7.0.1",
     "eslint-plugin-redux-saga": "0.3.0",
     "eventsource-polyfill": "0.9.6",
@@ -292,7 +307,9 @@
     "offline-plugin": "4.8.1",
     "plop": "1.8.0",
     "pre-commit": "1.2.2",
+    "prettier": "^1.10.2",
     "react-test-renderer": "15.6.1",
+    "redux-devtools-extension": "^2.13.2",
     "rimraf": "2.6.1",
     "shelljs": "^0.7.7",
     "style-loader": "0.18.1",

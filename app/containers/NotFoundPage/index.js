@@ -9,9 +9,5 @@ import React from 'react';
 import messages from './messages';
 
 export default function NotFound() {
-  return (
-    <article>
-      {messages.notFound}
-    </article>
-  );
+  return <article>{messages.notFound}</article>;
 }

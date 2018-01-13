@@ -14,7 +14,13 @@ import { selectMessages } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export function Hanabi({ message, setMessage, sendChatMessage, messages, startGame }) {
+export function Hanabi({
+  message,
+  setMessage,
+  sendChatMessage,
+  messages,
+  startGame,
+}) {
   return (
     <article>
       <Helmet>
@@ -23,17 +29,11 @@ export function Hanabi({ message, setMessage, sendChatMessage, messages, startGa
       </Helmet>
       <div>
         <input value={message} onChange={(e) => setMessage(e.target.value)} />
-        <button onClick={() => sendChatMessage(message)}>
-          Send message
-        </button>
+        <button onClick={() => sendChatMessage(message)}>Send message</button>
         <ul>
-          {
-          messages.map((m) => <li key={m.get('id')}>{ m.get('message') }</li>)
-        }
+          {messages.map((m) => <li key={m.get('id')}>{m.get('message')}</li>)}
         </ul>
-        <button onClick={() => startGame()}>
-          Send a game message
-        </button>
+        <button onClick={() => startGame()}>Send a game message</button>
       </div>
     </article>
   );
@@ -64,5 +64,5 @@ export default compose(
   withReducer,
   withSaga,
   withConnect,
-  withState('message', 'setMessage', '')
+  withState('message', 'setMessage', ''),
 )(Hanabi);

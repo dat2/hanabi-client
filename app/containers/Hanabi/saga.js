@@ -24,7 +24,10 @@ function* sendChatMessage(socket) {
   while (true) {
     const sendAction = yield take(SEND_CHAT_MESSAGE);
     const newMessageId = yield call(uuidv4);
-    const receiveAction = receiveChatMessage(sendAction.payload.message, newMessageId);
+    const receiveAction = receiveChatMessage(
+      sendAction.payload.message,
+      newMessageId,
+    );
     yield apply(socket, socket.emit, ['chat', { action: receiveAction }]);
     yield put(receiveAction);
   }
