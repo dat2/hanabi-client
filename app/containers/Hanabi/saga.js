@@ -14,8 +14,21 @@ import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
 
-import { SEND_CHAT_MESSAGE, SYNC_ACTION, START_GAME } from './constants';
-import { initializeGame, receiveChatMessage } from './actions';
+import {
+  SEND_CHAT_MESSAGE,
+  SYNC_ACTION,
+  START_GAME,
+  GIVE_COLOUR_INFO,
+  GIVE_NUMBER_INFO,
+  DISCARD,
+  PLAY,
+} from './constants';
+import {
+  initializeGame,
+  receiveChatMessage,
+  dealCard,
+  setNextPlayer,
+} from './actions';
 import { selectPlayers } from './selectors';
 
 function createSocketChannel(socket, channel) {
@@ -100,11 +113,12 @@ function* handleStartGame() {
     R.range(0, players.size),
   );
 
-  const blob = {
-    deck,
-    playerHands,
-  };
-  yield put(initializeGame(blob));
+  yield put(initializeGame(deck, playerHands));
+}
+
+function* handlePlayerTurn() {
+  yield put(dealCard());
+  yield put(setNextPlayer());
 }
 
 export default function* homePageSaga() {
@@ -118,5 +132,11 @@ export default function* homePageSaga() {
   const gameChannel = yield call(createSocketChannel, socket, 'game');
   yield fork(handleReceiveSyncMessages, gameChannel);
 
-  yield all([takeEvery(START_GAME, handleStartGame)]);
+  yield all([
+    takeEvery(START_GAME, handleStartGame),
+    takeEvery(
+      [GIVE_COLOUR_INFO, GIVE_NUMBER_INFO, DISCARD, PLAY],
+      handlePlayerTurn,
+    ),
+  ]);
 }

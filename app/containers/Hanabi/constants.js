@@ -9,3 +9,6 @@ export const GIVE_COLOUR_INFO = 'hanabi-client/Hanabi/GIVE_COLOUR_INFO';
 export const GIVE_NUMBER_INFO = 'hanabi-client/Hanabi/GIVE_NUMBER_INFO';
 export const DISCARD = 'hanabi-client/Hanabi/DISCARD';
 export const PLAY = 'hanabi-client/Hanabi/PLAY';
+
+export const DEAL_CARD = 'hanabi-client/Hanabi/DEAL_CARD';
+export const SET_NEXT_PLAYER = 'hanabi-client/Hanabi/SET_NEXT_PLAYER';

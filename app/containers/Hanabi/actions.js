@@ -9,6 +9,8 @@ import {
   GIVE_NUMBER_INFO,
   DISCARD,
   PLAY,
+  DEAL_CARD,
+  SET_NEXT_PLAYER,
 } from './constants';
 
 export function sendChatMessage(message) {
@@ -39,10 +41,10 @@ export function startGame() {
   };
 }
 
-export function initializeGame(blob) {
+export function initializeGame(deck, playerHands) {
   return syncAction({
     type: INITIALIZE_GAME,
-    payload: { blob },
+    payload: { deck, playerHands },
   });
 }
 
@@ -53,10 +55,10 @@ export function endGame() {
   });
 }
 
-export function giveColourInfo(suit, playerIndex) {
+export function giveColourInfo(colour, playerIndex) {
   return syncAction({
     type: GIVE_COLOUR_INFO,
-    payload: { suit, playerIndex },
+    payload: { colour, playerIndex },
   });
 }
 
@@ -74,9 +76,23 @@ export function discard() {
   });
 }
 
-export function play(card) {
+export function play(cardIndex) {
   return syncAction({
     type: PLAY,
-    payload: { card },
+    payload: { cardIndex },
   });
+}
+
+export function dealCard() {
+  return {
+    type: DEAL_CARD,
+    payload: null,
+  };
+}
+
+export function setNextPlayer() {
+  return {
+    type: SET_NEXT_PLAYER,
+    payload: null,
+  };
 }
