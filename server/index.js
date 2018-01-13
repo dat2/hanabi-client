@@ -13,7 +13,7 @@ const app = express();
 const proxy = require('http-proxy-middleware');
 
 app.use('/ws', proxy({
-  target: `http://localhost:4000`,
+  target: 'http://localhost:4000',
   logLevel: 'debug',
   ws: true,
 }));

@@ -1,3 +1,3 @@
 export default {
-  notFound: 'Not found'
-}
+  notFound: 'Not found',
+};
