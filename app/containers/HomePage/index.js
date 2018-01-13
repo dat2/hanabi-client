@@ -14,12 +14,12 @@ import { createStructuredSelector } from 'reselect';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import messages from './messages';
-// import { } from './actions';
+import { sendMessage } from './actions';
 // import { } from './selectors';
 import reducer from './reducer';
 import saga from './saga';
 
-export function HomePage() {
+export function HomePage({ sendMessage }) {
   return (
     <article>
       <Helmet>
@@ -27,18 +27,21 @@ export function HomePage() {
         <meta name="description" content="" />
       </Helmet>
       <div>
+        <button onClick={() => sendMessage('hello world')}>
+          Send message
+        </button>
       </div>
     </article>
   );
 }
 
 HomePage.propTypes = {
+  sendMessage: PropTypes.func.isRequired,
 };
 
-export function mapDispatchToProps(dispatch) {
-  return {
-  }
-}
+const mapDispatchToProps = {
+  sendMessage
+};
 
 const mapStateToProps = createStructuredSelector({
 });
