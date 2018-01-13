@@ -66,24 +66,12 @@ function* handleReceiveSyncMessages(channel) {
 }
 
 function generateDeck() {
-  const numberDistribution = [
-    [1, 3],
-    [2, 2],
-    [3, 2],
-    [4, 2],
-    [5, 1]
-  ];
+  const numberDistribution = [[1, 3], [2, 2], [3, 2], [4, 2], [5, 1]];
   const numbers = R.flatten(R.map(R.apply(R.repeat), numberDistribution));
-  const colours = [
-    'white',
-    'yellow',
-    'green',
-    'blue',
-    'red'
-  ];
+  const colours = ['white', 'yellow', 'green', 'blue', 'red'];
   return R.map(
     ([number, colour]) => ({ number, colour }),
-    R.xprod(numbers, colours)
+    R.xprod(numbers, colours),
   );
 }
 
@@ -92,7 +80,7 @@ function* handleStartGame() {
   const shuffled = yield call(shuffle, deck, { copy: true });
 
   const blob = {
-    deck: shuffled
+    deck: shuffled,
   };
   yield put(initializeGame(blob));
 }
