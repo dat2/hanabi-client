@@ -2,9 +2,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, bindActionCreators } from 'redux';
 import { createStructuredSelector } from 'reselect';
-import { withState } from 'recompose';
+import { lifecycle, withState } from 'recompose';
 import Immutable from 'immutable';
 
 import injectReducer from 'utils/injectReducer';
@@ -44,17 +44,17 @@ export function Hanabi({
           </pre>
         ))}
         {['white', 'yellow', 'blue', 'red', 'green'].map((colour) => (
-          <button onClick={() => giveColourInfo(colour, 1)}>
+          <button key={colour} onClick={() => giveColourInfo(colour, 1)}>
             Give {colour} colour info to player 1
           </button>
         ))}
         {[1, 2, 3, 4, 5].map((number) => (
-          <button onClick={() => giveNumberInfo(number, 1)}>
+          <button key={number} onClick={() => giveNumberInfo(number, 1)}>
             Give {number} number info to player 1
           </button>
         ))}
         {[0, 1, 2, 3, 4].map((cardIndex) => (
-          <button onClick={() => discard(cardIndex)}>
+          <button key={cardIndex} onClick={() => discard(cardIndex)}>
             Discard {cardIndex}
           </button>
         ))}
@@ -75,13 +75,14 @@ Hanabi.propTypes = {
   discard: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = {
+const mapDispatchToProps = (dispatch, { match: { params: { gameId } }}) => bindActionCreators({
   sendChatMessage: Actions.sendChatMessage,
   startGame: Actions.startGame,
   giveColourInfo: Actions.giveColourInfo,
   giveNumberInfo: Actions.giveNumberInfo,
   discard: Actions.discard,
-};
+  joinRoom: () => Actions.joinRoom(gameId)
+}, dispatch);
 
 const mapStateToProps = createStructuredSelector({
   messages: selectMessages,
@@ -97,4 +98,9 @@ export default compose(
   withSaga,
   withConnect,
   withState('message', 'setMessage', ''),
+  lifecycle({
+    componentDidMount() {
+      this.props.joinRoom();
+    }
+  })
 )(Hanabi);

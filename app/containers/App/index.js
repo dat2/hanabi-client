@@ -20,7 +20,7 @@ export default function App() {
         <meta name="description" content="" />
       </Helmet>
       <Switch>
-        <Route exact path="/" component={Hanabi} />
+        <Route exact path="/games/:gameId" component={Hanabi} />
         <Route component={NotFoundPage} />
       </Switch>
     </div>

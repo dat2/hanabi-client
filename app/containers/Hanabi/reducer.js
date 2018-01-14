@@ -2,6 +2,7 @@ import { fromJS } from 'immutable';
 import * as R from 'ramda';
 
 import {
+  JOIN_ROOM,
   RECEIVE_CHAT_MESSAGE,
   INITIALIZE_GAME,
   DEAL_CARD,
@@ -12,6 +13,7 @@ import {
 } from './constants';
 
 const initialState = fromJS({
+  gameId: null,
   messages: [],
   deck: [],
   discardPile: [],
@@ -20,6 +22,10 @@ const initialState = fromJS({
   currentPlayer: 0,
   infoTokens: 8,
 });
+
+function onJoinRoom(state, gameId) {
+  return state.set('gameId', gameId);
+}
 
 function onReceiveChatMessage(state, message) {
   return state.update('messages', (messages) => messages.push(fromJS(message)));
@@ -87,6 +93,8 @@ function onSetNextPlayer(state) {
 
 function hanabiReducer(state = initialState, action) {
   switch (action.type) {
+    case JOIN_ROOM:
+      return onJoinRoom(state, action.payload.gameId);
     case RECEIVE_CHAT_MESSAGE:
       return onReceiveChatMessage(state, action.payload);
     case INITIALIZE_GAME:

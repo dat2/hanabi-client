@@ -1,4 +1,5 @@
 import {
+  JOIN_ROOM,
   SEND_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGE,
   SYNC_ACTION,
@@ -12,6 +13,13 @@ import {
   DEAL_CARD,
   SET_NEXT_PLAYER,
 } from './constants';
+
+export function joinRoom(gameId) {
+  return {
+    type: JOIN_ROOM,
+    payload: { gameId }
+  };
+}
 
 export function sendChatMessage(message) {
   return {

@@ -1,3 +1,5 @@
+export const JOIN_ROOM = 'hanabi-client/Hanabi/JOIN_ROOM';
+
 export const SEND_CHAT_MESSAGE = 'hanabi-client/Hanabi/SEND_CHAT_MESSAGE';
 export const RECEIVE_CHAT_MESSAGE = 'hanabi-client/Hanabi/RECEIVE_CHAT_MESSAGE';
 

@@ -15,6 +15,7 @@ import * as R from 'ramda';
 import shuffle from 'shuffle-array';
 
 import {
+  JOIN_ROOM,
   SEND_CHAT_MESSAGE,
   SYNC_ACTION,
   START_GAME,
@@ -61,8 +62,8 @@ function* handleSendChatMessages(socket, channel) {
 function* handleSendSyncActions(socket, channel) {
   while (true) {
     const action = yield take(SYNC_ACTION);
-    yield put(action.payload.action);
     yield apply(socket, socket.emit, [channel, action.payload]);
+    yield put(action.payload.action);
   }
 }
 
@@ -125,7 +126,10 @@ function* handlePlayerTurn() {
 }
 
 export default function* homePageSaga() {
-  const socket = yield call(createSocket, '/', { path: '/ws' });
+  const action = yield take(JOIN_ROOM);
+  const gameId = action.payload.gameId;
+
+  const socket = yield call(createSocket, `/games/${gameId}`, { path: '/ws' });
   yield fork(handleSendChatMessages, socket, 'chat');
   yield fork(handleSendSyncActions, socket, 'game');
 
