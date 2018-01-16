@@ -24,6 +24,14 @@ app.use(
   }),
 );
 
+app.use(
+  '/api',
+  proxy({
+    target: 'http://localhost:4000',
+    logLevel: 'debug',
+  }),
+);
+
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
 

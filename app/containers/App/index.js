@@ -11,6 +11,7 @@ import { Helmet } from 'react-helmet';
 import { Switch, Route } from 'react-router-dom';
 
 import Hanabi from 'containers/Hanabi/Loadable';
+import Lobby from 'containers/Lobby/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
 
 export default function App() {
@@ -20,7 +21,8 @@ export default function App() {
         <meta name="description" content="" />
       </Helmet>
       <Switch>
-        <Route exact path="/games/:gameId" component={Hanabi} />
+        <Route exact path="/" component={Lobby} />
+        <Route path="/games/:gameId" component={Hanabi} />
         <Route component={NotFoundPage} />
       </Switch>
     </div>
