@@ -9,6 +9,7 @@ import Immutable from 'immutable';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
+import Card from 'components/Card';
 import * as Actions from './actions';
 import { selectMessages, selectPlayers } from './selectors';
 import reducer from './reducer';
@@ -38,11 +39,10 @@ export function Hanabi({
           {messages.map((m) => <li key={m.get('id')}>{m.get('message')}</li>)}
         </ul>
         <button onClick={() => startGame()}>Start game</button>
-        {players.map((player) => (
-          <pre key={player.get('name')}>
-            {JSON.stringify(player.toJS(), null, 2)}
-          </pre>
-        ))}
+        {players.map((player) => [
+          <p>{player.get('name')}</p>,
+          ...player.get('hand').map(card => <Card number={card.get('number')} colour={card.get('colour')} />)
+        ])}
         {['white', 'yellow', 'blue', 'red', 'green'].map((colour) => (
           <button key={colour} onClick={() => giveColourInfo(colour, 1)}>
             Give {colour} colour info to player 1
