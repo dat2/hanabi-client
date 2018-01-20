@@ -129,7 +129,7 @@ export default function* homePageSaga() {
   const action = yield take(JOIN_ROOM);
   const gameId = action.payload.gameId;
 
-  const socket = yield call(createSocket, `/games/${gameId}`, { path: '/ws' });
+  const socket = yield call(createSocket, `${process.env.WS_SERVER_URL}/games/${gameId}`, { path: '/ws' });
   yield fork(handleSendChatMessages, socket, 'chat');
   yield fork(handleSendSyncActions, socket, 'game');
 
