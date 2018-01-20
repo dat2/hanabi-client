@@ -258,7 +258,6 @@
     "reselect": "3.0.1",
     "sanitize.css": "4.1.0",
     "shuffle-array": "^1.0.1",
-    "socket.io-client": "^2.0.4",
     "styled-components": "2.0.0",
     "uuid": "^3.1.0",
     "warning": "3.0.0",

@@ -9,7 +9,6 @@ import {
   take,
   takeEvery,
 } from 'redux-saga/effects';
-import createSocket from 'socket.io-client';
 import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
@@ -31,6 +30,51 @@ import {
   setNextPlayer,
 } from './actions';
 import { selectPlayers } from './selectors';
+
+class WSocket {
+  constructor({ host, path = '', namespace = '' }) {
+    this.namespace = namespace;
+    this.handlers = [];
+    this.socket = new WebSocket(`ws://${host}${path}`);
+    this.socket.onmessage = this.handleMessage;
+  }
+
+  emit = (channel, payload) => {
+    this.socket.send(JSON.stringify({
+      namespace: this.namespace,
+      channel,
+      payload
+    }));
+  }
+
+  on = (channel, handler) => {
+    this.handlers.push({ channel, handler });
+  }
+
+  handleMessage = (event) => {
+    const message = JSON.parse(event.data);
+    if (message.namespace === this.namespace) {
+      this.handlers
+        .filter(({ channel }) => message.channel === channel)
+        .forEach(({ handler }) => {
+          handler(message.payload);
+        })
+    }
+  }
+
+  wait() {
+    return new Promise((resolve, reject) => {
+      this.socket.onopen = (event) => {
+        resolve(this);
+      };
+    });
+  }
+}
+
+function createSocket(options) {
+  const wsocket = new WSocket(options);
+  return wsocket.wait();
+}
 
 function createSocketChannel(socket, channel) {
   return eventChannel((emit) => {
@@ -129,7 +173,7 @@ export default function* homePageSaga() {
   const action = yield take(JOIN_ROOM);
   const gameId = action.payload.gameId;
 
-  const socket = yield call(createSocket, `${process.env.WS_SERVER_URL}/games/${gameId}`, { path: '/ws' });
+  const socket = yield call(createSocket, { host: process.env.WS_SERVER_URL, path: '/ws', namespace: `/games/${gameId}` });
   yield fork(handleSendChatMessages, socket, 'chat');
   yield fork(handleSendSyncActions, socket, 'game');
 

@@ -9,7 +9,7 @@ import Immutable from 'immutable';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
-import Card from 'components/Card';
+import Player from 'components/Player';
 import * as Actions from './actions';
 import { selectMessages, selectPlayers } from './selectors';
 import reducer from './reducer';
@@ -22,9 +22,6 @@ export function Hanabi({
   messages,
   players,
   startGame,
-  giveColourInfo,
-  giveNumberInfo,
-  discard,
 }) {
   return (
     <article>
@@ -35,29 +32,7 @@ export function Hanabi({
       <div>
         <input value={message} onChange={(e) => setMessage(e.target.value)} />
         <button onClick={() => sendChatMessage(message)}>Send message</button>
-        <ul>
-          {messages.map((m) => <li key={m.get('id')}>{m.get('message')}</li>)}
-        </ul>
         <button onClick={() => startGame()}>Start game</button>
-        {players.map((player) => [
-          <p>{player.get('name')}</p>,
-          ...player.get('hand').map(card => <Card number={card.get('number')} colour={card.get('colour')} />)
-        ])}
-        {['white', 'yellow', 'blue', 'red', 'green'].map((colour) => (
-          <button key={colour} onClick={() => giveColourInfo(colour, 1)}>
-            Give {colour} colour info to player 1
-          </button>
-        ))}
-        {[1, 2, 3, 4, 5].map((number) => (
-          <button key={number} onClick={() => giveNumberInfo(number, 1)}>
-            Give {number} number info to player 1
-          </button>
-        ))}
-        {[0, 1, 2, 3, 4].map((cardIndex) => (
-          <button key={cardIndex} onClick={() => discard(cardIndex)}>
-            Discard {cardIndex}
-          </button>
-        ))}
       </div>
     </article>
   );
@@ -67,8 +42,8 @@ Hanabi.propTypes = {
   sendChatMessage: PropTypes.func.isRequired,
   message: PropTypes.string.isRequired,
   setMessage: PropTypes.func.isRequired,
-  messages: PropTypes.instanceOf(Immutable.List).isRequired,
-  players: PropTypes.instanceOf(Immutable.List).isRequired,
+  messages: PropTypes.array.isRequired,
+  players: PropTypes.array.isRequired,
   startGame: PropTypes.func.isRequired,
   giveColourInfo: PropTypes.func.isRequired,
   giveNumberInfo: PropTypes.func.isRequired,
@@ -86,7 +61,7 @@ const mapDispatchToProps = (dispatch, { match: { params: { gameId } }}) => bindA
 
 const mapStateToProps = createStructuredSelector({
   messages: selectMessages,
-  players: selectPlayers,
+  players: selectPlayers
 });
 
 const withConnect = connect(mapStateToProps, mapDispatchToProps);
