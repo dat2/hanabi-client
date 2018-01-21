@@ -1,7 +1,7 @@
 import { syncAction } from 'features/sync/actions';
 
 import {
-  JOIN_ROOM,
+  JOIN_GAME,
   FAILED_TO_CONNECT,
   SEND_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGE,
@@ -15,13 +15,6 @@ import {
   DEAL_CARD,
   SET_NEXT_PLAYER,
 } from './constants';
-
-export function joinRoom(gameId) {
-  return {
-    type: JOIN_ROOM,
-    payload: { gameId }
-  };
-}
 
 export function failedToConnect() {
   return {

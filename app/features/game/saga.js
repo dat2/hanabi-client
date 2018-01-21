@@ -14,9 +14,9 @@ import shuffle from 'shuffle-array';
 
 import syncSaga from 'features/sync/saga';
 import { SYNC_ACTION } from 'features/sync/constants';
+import { JOIN_GAME_SUCCESS } from 'features/api/constants';
 
 import {
-  JOIN_ROOM,
   SEND_CHAT_MESSAGE,
   START_GAME,
   GIVE_COLOUR_INFO,
@@ -106,7 +106,7 @@ function* handlePlayerTurn() {
 }
 
 export default function* gameSaga() {
-  const action = yield take(JOIN_ROOM);
+  const action = yield take(JOIN_GAME_SUCCESS);
   const gameId = action.payload.gameId;
 
   try {

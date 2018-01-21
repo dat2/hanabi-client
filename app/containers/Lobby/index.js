@@ -30,7 +30,6 @@ const mapDispatchToProps = {
 const withConnect = connect(undefined, mapDispatchToProps);
 
 export default compose(
-  injectSaga({ key: 'api', saga }),
   withConnect,
   withState('name', 'setNameState', ''),
 )(Lobby);

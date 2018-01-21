@@ -10,6 +10,7 @@ import Immutable from 'immutable';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Player from 'components/Player';
+import { joinGame } from 'features/api/actions';
 import * as Actions from 'features/game/actions';
 import { selectMessages, selectPlayers } from 'features/game/selectors';
 import reducer from 'features/game/reducer';
@@ -56,7 +57,7 @@ const mapDispatchToProps = (dispatch, { match: { params: { gameId } }}) => bindA
   giveColourInfo: Actions.giveColourInfo,
   giveNumberInfo: Actions.giveNumberInfo,
   discard: Actions.discard,
-  joinRoom: () => Actions.joinRoom(gameId)
+  joinGame: () => joinGame(gameId)
 }, dispatch);
 
 const mapStateToProps = createStructuredSelector({
@@ -71,7 +72,7 @@ export default compose(
   withState('message', 'setMessage', ''),
   lifecycle({
     componentDidMount() {
-      this.props.joinRoom();
+      this.props.joinGame();
     }
   })
 )(Hanabi);

@@ -8,13 +8,17 @@
 
 import React from 'react';
 import { Helmet } from 'react-helmet';
+import { withRouter } from 'react-router';
 import { Switch, Route } from 'react-router-dom';
+import { compose } from 'redux';
 
 import Hanabi from 'containers/Hanabi/Loadable';
 import Lobby from 'containers/Lobby/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import injectSaga from 'utils/injectSaga';
+import apiSaga from 'features/api/saga';
 
-export default function App() {
+function App() {
   return (
     <div>
       <Helmet>
@@ -28,3 +32,8 @@ export default function App() {
     </div>
   );
 }
+
+export default compose(
+  injectSaga({ key: 'api', saga: apiSaga }),
+  withRouter
+)(App);

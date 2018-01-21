@@ -1,9 +1,3 @@
-/*
- *
- * Lobby actions
- *
- */
-
 import {
   CREATE_GAME,
   CREATE_GAME_SUCCESS,
@@ -11,6 +5,9 @@ import {
   SET_NAME,
   SET_NAME_SUCCESS,
   SET_NAME_FAILED,
+  JOIN_GAME,
+  JOIN_GAME_SUCCESS,
+  JOIN_GAME_FAILED
 } from './constants';
 
 export function createGame() {
@@ -50,4 +47,26 @@ export function setNameFailed(e) {
   return {
     type: SET_NAME_FAILED,
   };
+}
+
+export function joinGame(gameId) {
+  return {
+    type: JOIN_GAME,
+    payload: { gameId }
+  };
+}
+
+export function joinGameSuccess(gameId) {
+  return {
+    type: JOIN_GAME_SUCCESS,
+    payload: { gameId }
+  };
+}
+
+export function joinGameFailed(error) {
+  return {
+    type: JOIN_GAME_FAILED,
+    payload: error,
+    error: true
+  }
 }

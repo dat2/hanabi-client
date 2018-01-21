@@ -1,4 +1,3 @@
-export const JOIN_ROOM = 'hanabi-client/game/JOIN_ROOM';
 export const FAILED_TO_CONNECT = 'hanabi-client/game/FAILED_TO_CONNECT';
 
 export const SEND_CHAT_MESSAGE = 'hanabi-client/game/SEND_CHAT_MESSAGE';
