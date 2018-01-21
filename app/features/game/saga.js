@@ -1,4 +1,3 @@
-import { eventChannel } from 'redux-saga';
 import {
   all,
   apply,
@@ -13,10 +12,12 @@ import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
 
+import syncSaga from 'features/sync/saga';
+import { SYNC_ACTION } from 'features/sync/constants';
+
 import {
   JOIN_ROOM,
   SEND_CHAT_MESSAGE,
-  SYNC_ACTION,
   START_GAME,
   GIVE_COLOUR_INFO,
   GIVE_NUMBER_INFO,
@@ -28,72 +29,11 @@ import {
   receiveChatMessage,
   dealCard,
   setNextPlayer,
+  failedToConnect
 } from './actions';
 import { selectPlayers } from './selectors';
 
-class WSocket {
-  constructor({ origin, path = '', namespace = '', secure = false }) {
-    this.namespace = namespace;
-    this.handlers = [];
-    this.socket = new WebSocket(`${origin}${path}`);
-    this.socket.onmessage = this.handleMessage;
-  }
-
-  emit = (channel, payload) => {
-    this.socket.send(JSON.stringify({
-      namespace: this.namespace,
-      channel,
-      payload
-    }));
-  }
-
-  on = (channel, handler) => {
-    this.handlers.push({ channel, handler });
-  }
-
-  handleMessage = (event) => {
-    const message = JSON.parse(event.data);
-    if (message.namespace === this.namespace) {
-      this.handlers
-        .filter(({ channel }) => message.channel === channel)
-        .forEach(({ handler }) => {
-          handler(message.payload);
-        })
-    }
-  }
-
-  wait() {
-    return new Promise((resolve, reject) => {
-      this.socket.onopen = (event) => {
-        resolve(this);
-      };
-    });
-  }
-}
-
-function createSocket(options) {
-  const wsocket = new WSocket({
-    ...options,
-    secure: process.env.NODE_ENV === 'production'
-  });
-  return wsocket.wait();
-}
-
-function createSocketChannel(socket, channel) {
-  return eventChannel((emit) => {
-    function eventHandler(event) {
-      emit(event);
-    }
-
-    socket.on(channel, eventHandler);
-
-    return () => {
-      socket.off(channel, eventHandler);
-    };
-  });
-}
-
-function* handleSendChatMessages(socket, channel) {
+function* sendChatMessages(socket, channel) {
   while (true) {
     const sendAction = yield take(SEND_CHAT_MESSAGE);
     const newMessageId = yield call(uuidv4);
@@ -101,27 +41,20 @@ function* handleSendChatMessages(socket, channel) {
       sendAction.payload.message,
       newMessageId,
     );
-    yield apply(socket, socket.emit, [channel, { action: receiveAction }]);
+    yield call(socket.emit, channel, { action: receiveAction });
     yield put(receiveAction);
   }
 }
 
-function* handleSendSyncActions(socket, channel) {
+function* sendGameActions(socket, channel) {
   while (true) {
     const action = yield take(SYNC_ACTION);
-    yield apply(socket, socket.emit, [channel, action.payload]);
+    yield call(socket.emit, channel, action.payload);
     yield put(action.payload.action);
   }
 }
 
-function* handleReceiveChatMessages(channel) {
-  while (true) {
-    const payload = yield take(channel);
-    yield put(payload.action);
-  }
-}
-
-function* handleReceiveSyncMessages(channel) {
+function* receiveAndPut(channel) {
   while (true) {
     const payload = yield take(channel);
     yield put(payload.action);
@@ -172,25 +105,34 @@ function* handlePlayerTurn() {
   yield put(setNextPlayer());
 }
 
-export default function* homePageSaga() {
+export default function* gameSaga() {
   const action = yield take(JOIN_ROOM);
   const gameId = action.payload.gameId;
 
-  const socket = yield call(createSocket, { origin: process.env.WS_SERVER_ORIGIN, path: '/ws', namespace: `/games/${gameId}` });
-  yield fork(handleSendChatMessages, socket, 'chat');
-  yield fork(handleSendSyncActions, socket, 'game');
+  try {
+    yield call(
+      syncSaga,
+      {
+        origin: process.env.WS_SERVER_ORIGIN,
+        path: '/ws',
+        namespace: `/games/${gameId}`
+      },
+      [
+        { channel: 'chat', saga: sendChatMessages },
+        { channel: 'game', saga: sendGameActions }
+      ],
+      [
+        { channel: 'chat', saga: receiveAndPut },
+        { channel: 'game', saga: receiveAndPut }
+      ]
+    );
+  } catch (e) {
+    yield put(failedToConnect());
+  }
 
-  const messageChannel = yield call(createSocketChannel, socket, 'chat');
-  yield fork(handleReceiveChatMessages, messageChannel);
-
-  const gameChannel = yield call(createSocketChannel, socket, 'game');
-  yield fork(handleReceiveSyncMessages, gameChannel);
-
-  yield all([
-    takeEvery(START_GAME, handleStartGame),
-    takeEvery(
-      [GIVE_COLOUR_INFO, GIVE_NUMBER_INFO, DISCARD, PLAY],
-      handlePlayerTurn,
-    ),
-  ]);
+  yield takeEvery(START_GAME, handleStartGame);
+  yield takeEvery(
+    [GIVE_COLOUR_INFO, GIVE_NUMBER_INFO, DISCARD, PLAY],
+    handlePlayerTurn,
+  );
 }

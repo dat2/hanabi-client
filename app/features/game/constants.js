@@ -1,9 +1,9 @@
 export const JOIN_ROOM = 'hanabi-client/game/JOIN_ROOM';
+export const FAILED_TO_CONNECT = 'hanabi-client/game/FAILED_TO_CONNECT';
 
 export const SEND_CHAT_MESSAGE = 'hanabi-client/game/SEND_CHAT_MESSAGE';
 export const RECEIVE_CHAT_MESSAGE = 'hanabi-client/game/RECEIVE_CHAT_MESSAGE';
 
-export const SYNC_ACTION = 'hanabi-client/game/SYNC_ACTION';
 export const INITIALIZE_GAME = 'hanabi-client/game/INITIALIZE_GAME';
 export const START_GAME = 'hanabi-client/game/START_GAME';
 export const END_GAME = 'hanabi-client/game/END_GAME';

@@ -1,8 +1,10 @@
+import { syncAction } from 'features/sync/actions';
+
 import {
   JOIN_ROOM,
+  FAILED_TO_CONNECT,
   SEND_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGE,
-  SYNC_ACTION,
   START_GAME,
   INITIALIZE_GAME,
   END_GAME,
@@ -21,6 +23,13 @@ export function joinRoom(gameId) {
   };
 }
 
+export function failedToConnect() {
+  return {
+    type: FAILED_TO_CONNECT,
+    payload: {},
+  };
+}
+
 export function sendChatMessage(message) {
   return {
     type: SEND_CHAT_MESSAGE,
@@ -32,13 +41,6 @@ export function receiveChatMessage(message, id) {
   return {
     type: RECEIVE_CHAT_MESSAGE,
     payload: { message, id },
-  };
-}
-
-export function syncAction(action) {
-  return {
-    type: SYNC_ACTION,
-    payload: { action },
   };
 }
 
