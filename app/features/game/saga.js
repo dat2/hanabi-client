@@ -32,10 +32,10 @@ import {
 import { selectPlayers } from './selectors';
 
 class WSocket {
-  constructor({ origin, path = '', namespace = '' }) {
+  constructor({ origin, path = '', namespace = '', secure = false }) {
     this.namespace = namespace;
     this.handlers = [];
-    this.socket = new WebSocket(`ws://${origin}${path}`);
+    this.socket = new WebSocket(`${origin}${path}`);
     this.socket.onmessage = this.handleMessage;
   }
 
@@ -72,7 +72,10 @@ class WSocket {
 }
 
 function createSocket(options) {
-  const wsocket = new WSocket(options);
+  const wsocket = new WSocket({
+    ...options,
+    secure: process.env.NODE_ENV === 'production'
+  });
   return wsocket.wait();
 }
 

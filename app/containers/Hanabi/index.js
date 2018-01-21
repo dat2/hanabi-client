@@ -10,10 +10,10 @@ import Immutable from 'immutable';
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Player from 'components/Player';
-import * as Actions from './actions';
-import { selectMessages, selectPlayers } from './selectors';
-import reducer from './reducer';
-import saga from './saga';
+import * as Actions from 'features/game/actions';
+import { selectMessages, selectPlayers } from 'features/game/selectors';
+import reducer from 'features/game/reducer';
+import saga from 'features/game/saga';
 
 export function Hanabi({
   message,
@@ -64,14 +64,10 @@ const mapStateToProps = createStructuredSelector({
   players: selectPlayers
 });
 
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-const withReducer = injectReducer({ key: 'hanabi', reducer });
-const withSaga = injectSaga({ key: 'hanabi', saga });
-
 export default compose(
-  withReducer,
-  withSaga,
-  withConnect,
+  injectReducer({ key: 'hanabi', reducer }),
+  injectSaga({ key: 'hanabi', saga }),
+  connect(mapStateToProps, mapDispatchToProps),
   withState('message', 'setMessage', ''),
   lifecycle({
     componentDidMount() {

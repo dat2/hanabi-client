@@ -99,7 +99,7 @@ module.exports = (options) => ({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
         API_SERVER_ORIGIN: process.env.NODE_ENV === 'development' ? "'http://localhost:4000'" : `'${process.env.API_SERVER_ORIGIN}'`,
-        WS_SERVER_ORIGIN: process.env.NODE_ENV === 'development' ? "'http://localhost:5000'" : `'${process.env.WS_SERVER_ORIGIN}'`
+        WS_SERVER_ORIGIN: process.env.NODE_ENV === 'development' ? "'ws://localhost:5000'" : `'${process.env.WS_SERVER_ORIGIN}'`
       },
     }),
     new webpack.NamedModulesPlugin(),
