@@ -13,15 +13,6 @@ const ngrok =
     : false;
 const resolve = require('path').resolve;
 const app = express();
-const proxy = require('http-proxy-middleware');
-
-app.use(
-  '/api',
-  proxy({
-    target: 'http://localhost:4000',
-    logLevel: 'debug',
-  }),
-);
 
 // If you need a backend, e.g. an API, add your custom backend-specific middleware here
 // app.use('/api', myApi);
