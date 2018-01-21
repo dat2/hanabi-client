@@ -6,9 +6,8 @@ import { compose } from 'redux';
 
 import injectSaga from 'utils/injectSaga';
 import injectReducer from 'utils/injectReducer';
-import { createGame } from './actions';
-import reducer from './reducer';
-import saga from './saga';
+import { createGame } from 'features/api/actions';
+import saga from 'features/api/saga';
 
 const Lobby = ({ createGame }) => (
   <div>
@@ -20,20 +19,13 @@ Lobby.propTypes = {
   createGame: PropTypes.func.isRequired,
 };
 
-const mapStateToProps = createStructuredSelector({
-});
-
 const mapDispatchToProps = {
   createGame
 };
 
-const withConnect = connect(mapStateToProps, mapDispatchToProps);
-
-const withReducer = injectReducer({ key: 'lobby', reducer });
-const withSaga = injectSaga({ key: 'lobby', saga });
+const withConnect = connect(undefined, mapDispatchToProps);
 
 export default compose(
-  withReducer,
-  withSaga,
+  injectSaga({ key: 'api', saga }),
   withConnect,
 )(Lobby);
