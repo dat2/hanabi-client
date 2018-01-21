@@ -32,10 +32,10 @@ import {
 import { selectPlayers } from './selectors';
 
 class WSocket {
-  constructor({ host, path = '', namespace = '' }) {
+  constructor({ origin, path = '', namespace = '' }) {
     this.namespace = namespace;
     this.handlers = [];
-    this.socket = new WebSocket(`ws://${host}${path}`);
+    this.socket = new WebSocket(`ws://${origin}${path}`);
     this.socket.onmessage = this.handleMessage;
   }
 
@@ -173,7 +173,7 @@ export default function* homePageSaga() {
   const action = yield take(JOIN_ROOM);
   const gameId = action.payload.gameId;
 
-  const socket = yield call(createSocket, { host: process.env.WS_SERVER_URL, path: '/ws', namespace: `/games/${gameId}` });
+  const socket = yield call(createSocket, { origin: process.env.WS_SERVER_ORIGIN, path: '/ws', namespace: `/games/${gameId}` });
   yield fork(handleSendChatMessages, socket, 'chat');
   yield fork(handleSendSyncActions, socket, 'game');
 

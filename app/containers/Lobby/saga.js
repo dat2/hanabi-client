@@ -7,7 +7,7 @@ import { createGameSuccess, createGameFailed } from './actions';
 
 function* createGameSaga() {
   try {
-    const game = yield call(request, `${process.env.API_SERVER_URL}/api/games`, { method: 'POST' });
+    const game = yield call(request, `${process.env.API_SERVER_ORIGIN}/api/games`, { method: 'POST' });
     yield put(push(`/games/${game.id}`));
     yield put(createGameSuccess(game.id));
   } catch (e) {
