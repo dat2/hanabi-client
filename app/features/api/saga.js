@@ -34,14 +34,21 @@ function* setNameSaga({ payload: { name } }) {
 
 function* createGameSaga({ payload: { values, onCreate, onError } }) {
   try {
-    const game = yield call(
+    const response = yield call(
       request,
       `${process.env.API_SERVER_ORIGIN}/api/games`,
-      { method: 'POST', credentials: 'include', body: JSON.stringify(values) }
+      {
+        method: 'POST',
+        body: JSON.stringify(values),
+        headers: new Headers({
+          'Content-Type': 'application/json'
+        }),
+        credentials: 'include'
+      }
     );
-    yield put(createGameSuccess(game.id));
+    yield put(createGameSuccess(response.game));
     yield call(onCreate);
-    yield put(replace(`/games/${game.id}`));
+    yield put(replace(`/games/${response.game.id}`));
   } catch (e) {
     yield call(onError, e);
     yield put(createGameFailed(e));

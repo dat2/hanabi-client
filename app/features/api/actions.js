@@ -17,10 +17,10 @@ export function createGame(values, onCreate, onError) {
   };
 }
 
-export function createGameSuccess(gameId) {
+export function createGameSuccess(game) {
   return {
     type: CREATE_GAME_SUCCESS,
-    payload: { gameId }
+    payload: { game }
   };
 }
 
