@@ -1,5 +1,5 @@
 import { takeEvery, call, put, select } from 'redux-saga/effects';
-import { push } from 'react-router-redux';
+import { replace } from 'react-router-redux';
 
 import request from 'utils/request';
 import { SET_NAME, CREATE_GAME, JOIN_GAME } from './constants';
@@ -32,16 +32,18 @@ function* setNameSaga({ payload: { name } }) {
   }
 }
 
-function* createGameSaga() {
+function* createGameSaga({ payload: { values, onCreate, onError } }) {
   try {
     const game = yield call(
       request,
       `${process.env.API_SERVER_ORIGIN}/api/games`,
-      { method: 'POST', credentials: 'include' }
+      { method: 'POST', credentials: 'include', body: JSON.stringify(values) }
     );
     yield put(createGameSuccess(game.id));
-    yield put(push(`/games/${game.id}`));
+    yield call(onCreate);
+    yield put(replace(`/games/${game.id}`));
   } catch (e) {
+    yield call(onError, e);
     yield put(createGameFailed(e));
   }
 }

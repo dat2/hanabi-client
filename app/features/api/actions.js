@@ -10,9 +10,10 @@ import {
   JOIN_GAME_FAILED
 } from './constants';
 
-export function createGame() {
+export function createGame(values, onCreate, onError) {
   return {
     type: CREATE_GAME,
+    payload: { values, onCreate, onError }
   };
 }
 

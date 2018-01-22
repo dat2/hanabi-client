@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Helmet } from 'react-helmet';
 import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
 import { createStructuredSelector } from 'reselect';
@@ -26,10 +25,6 @@ export function Hanabi({
 }) {
   return (
     <article>
-      <Helmet>
-        <title>Hanabi</title>
-        <meta name="description" content="" />
-      </Helmet>
       <div>
         <input value={message} onChange={(e) => setMessage(e.target.value)} />
         <button onClick={() => sendChatMessage(message)}>Send message</button>
