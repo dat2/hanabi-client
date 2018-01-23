@@ -15,4 +15,8 @@ injectGlobal`
   body.fontLoaded {
     font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
   }
+
+  .grow-1 {
+    flex-grow: 1;
+  }
 `;
