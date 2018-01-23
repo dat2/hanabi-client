@@ -2,10 +2,12 @@ import { takeEvery, call, put, select } from 'redux-saga/effects';
 import { replace } from 'react-router-redux';
 
 import request from 'utils/request';
-import { SET_NAME, CREATE_GAME, JOIN_GAME } from './constants';
+import { SET_NAME, FETCH_GAMES, CREATE_GAME, JOIN_GAME } from './constants';
 import {
   setNameSuccess,
   setNameFailed,
+  fetchGamesSuccess,
+  fetchGamesFailed,
   createGameSuccess,
   createGameFailed,
   joinGameSuccess,
@@ -29,6 +31,19 @@ function* setNameSaga({ payload: { name } }) {
     yield put(setNameSuccess(name));
   } catch (e) {
     yield put(setNameFailed(e));
+  }
+}
+
+function* fetchGamesSaga() {
+  try {
+    const response = yield call(
+      request,
+      `${process.env.API_SERVER_ORIGIN}/api/games/`,
+      { method: 'GET', credentials: 'include' }
+    );
+    yield put(fetchGamesSuccess(response.games));
+  } catch (e) {
+    yield put(fetchGamesFailed(response.games));
   }
 }
 
@@ -70,6 +85,7 @@ function* joinGameSaga({ payload: { gameId } }) {
 
 export default function* defaultSaga() {
   yield takeEvery(SET_NAME, setNameSaga);
+  yield takeEvery(FETCH_GAMES, fetchGamesSaga);
   yield takeEvery(CREATE_GAME, createGameSaga);
   yield takeEvery(JOIN_GAME, joinGameSaga);
 }
