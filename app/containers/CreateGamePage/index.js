@@ -76,6 +76,17 @@ const CreateGameInnerForm = ({
           className="pa2 ba w-100"
         />
       </div>
+      <div className="mt3">
+        <input
+          type="checkbox"
+          name="unlisted"
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={values.unlisted}
+          className="mr2"
+        />
+        Unlisted
+      </div>
     </fieldset>
     <button
       type="submit"
@@ -92,11 +103,12 @@ const withForm = withFormik({
     name: yup.string().required(),
     players: yup.number().required().min(2).max(5),
     protected: yup.boolean().default(() => false),
-    password: yup.string()
+    password: yup.string(),
+    unlisted: yup.boolean().required()
   }),
   handleSubmit(values, { props, setSubmitting, setErrors }) {
     props.createGame(
-      _.pickBy(_.omit(values, ['protected']), _.identity),
+      _.pickBy(_.omit(values, ['protected']), v => v !== ''),
       () => {
         setSubmitting(false);
       },
@@ -116,6 +128,7 @@ const CreateGamePage = ({ createGame }) => (
       players={5}
       protected={false}
       password=""
+      unlisted={false}
       createGame={createGame}
     />
   </article>
