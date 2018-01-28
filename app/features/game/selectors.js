@@ -21,8 +21,6 @@ export const selectPlayers = createSelector(
   (players, playerHands) =>
     players
       .zipAll(playerHands)
-      .map(([player, hand = new Immutable.Map({})]) =>
-        player.set('hand', hand),
-      )
+      .map(([player, hand = new Immutable.Map({})]) => player.set('hand', hand))
       .toJS(),
 );

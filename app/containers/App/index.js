@@ -1,5 +1,4 @@
 import React from 'react';
-import { Helmet } from 'react-helmet';
 import { withRouter } from 'react-router';
 import { Switch, Route } from 'react-router-dom';
 import { compose } from 'redux';
@@ -24,7 +23,6 @@ function App() {
   );
 }
 
-export default compose(
-  injectSaga({ key: 'api', saga: apiSaga }),
-  withRouter
-)(App);
+export default compose(injectSaga({ key: 'api', saga: apiSaga }), withRouter)(
+  App,
+);

@@ -1,13 +1,4 @@
-import {
-  all,
-  apply,
-  call,
-  fork,
-  put,
-  select,
-  take,
-  takeEvery,
-} from 'redux-saga/effects';
+import { call, put, select, take, takeEvery } from 'redux-saga/effects';
 import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
@@ -29,7 +20,7 @@ import {
   receiveChatMessage,
   dealCard,
   setNextPlayer,
-  failedToConnect
+  failedToConnect,
 } from './actions';
 import { selectPlayers } from './selectors';
 
@@ -115,16 +106,16 @@ export default function* gameSaga() {
       {
         origin: process.env.WS_SERVER_ORIGIN,
         path: '/ws',
-        namespace: `/games/${gameId}`
+        namespace: `/games/${gameId}`,
       },
       [
         { channel: 'chat', saga: sendChatMessages },
-        { channel: 'game', saga: sendGameActions }
+        { channel: 'game', saga: sendGameActions },
       ],
       [
         { channel: 'chat', saga: receiveAndPut },
-        { channel: 'game', saga: receiveAndPut }
-      ]
+        { channel: 'game', saga: receiveAndPut },
+      ],
     );
   } catch (e) {
     yield put(failedToConnect());

@@ -3,7 +3,7 @@ import { fromJS } from 'immutable';
 import { FETCH_GAMES_SUCCESS } from './constants';
 
 const initialState = fromJS({
-  games: []
+  games: [],
 });
 
 function onFetchGamesSuccess(state, games) {

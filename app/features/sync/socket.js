@@ -9,16 +9,18 @@ export default class Socket {
   }
 
   emit = (channel, payload) => {
-    this.socket.send(JSON.stringify({
-      namespace: this.namespace,
-      channel,
-      payload
-    }));
-  }
+    this.socket.send(
+      JSON.stringify({
+        namespace: this.namespace,
+        channel,
+        payload,
+      }),
+    );
+  };
 
   on = (channel, handler) => {
     this.handlers.push({ channel, handler });
-  }
+  };
 
   handleMessage = (event) => {
     const message = JSON.parse(event.data);
@@ -27,16 +29,16 @@ export default class Socket {
         .filter(({ channel }) => message.channel === channel)
         .forEach(({ handler }) => {
           handler(message.payload);
-        })
+        });
     }
-  }
+  };
 
   waitForOpen() {
     return new Promise((resolve, reject) => {
-      this.socket.onopen = (event) => {
+      this.socket.onopen = () => {
         resolve(this);
       };
-      this.socket.onclose = (event) => {
+      this.socket.onclose = () => {
         reject(new Error('closed'));
       };
     });

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { withFormik } from 'formik';
@@ -6,7 +7,7 @@ import yup from 'yup';
 import cx from 'classnames';
 import _ from 'lodash';
 
-import { createGame } from 'features/api/actions';
+import * as ApiActions from 'features/api/actions';
 
 const CreateGameInnerForm = ({
   values,
@@ -15,12 +16,9 @@ const CreateGameInnerForm = ({
   handleChange,
   handleBlur,
   handleSubmit,
-  isSubmitting
+  isSubmitting,
 }) => (
-  <form
-    onSubmit={handleSubmit}
-    className="measure center pa2"
-  >
+  <form onSubmit={handleSubmit} className="measure center pa2">
     <fieldset className="b--transparent ph0 mh0">
       <legend className="f4 fw6">Create Game</legend>
       <div className="mt3">
@@ -36,7 +34,10 @@ const CreateGameInnerForm = ({
           className="pa2 ba w-100"
         />
       </div>
-      {touched.name && errors.name && <div className="mt3 pa2 bg-light-red">{errors.name}</div>}
+      {touched.name &&
+        errors.name && (
+          <div className="mt3 pa2 bg-light-red">{errors.name}</div>
+        )}
       <div className="mt3">
         <label className="db fw6 lh-copy f6" htmlFor="players">
           Number of Players
@@ -50,7 +51,10 @@ const CreateGameInnerForm = ({
           className="pa2 ba w-100"
         />
       </div>
-      {touched.players && errors.players && <div className="mt3 pa2 bg-light-red">{errors.players}</div>}
+      {touched.players &&
+        errors.players && (
+          <div className="mt3 pa2 bg-light-red">{errors.players}</div>
+        )}
       <div className="mt3">
         <input
           type="checkbox"
@@ -98,25 +102,51 @@ const CreateGameInnerForm = ({
   </form>
 );
 
+CreateGameInnerForm.propTypes = {
+  values: PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    players: PropTypes.number.isRequired,
+    protected: PropTypes.bool.isRequired,
+    password: PropTypes.string.isRequired,
+    unlisted: PropTypes.bool.isRequired,
+  }).isRequired,
+  errors: PropTypes.shape({
+    name: PropTypes.string,
+    players: PropTypes.string,
+    protected: PropTypes.string,
+    password: PropTypes.string,
+    unlisted: PropTypes.string,
+  }),
+  touched: PropTypes.bool.isRequired,
+  handleChange: PropTypes.func.isRequired,
+  handleBlur: PropTypes.func.isRequired,
+  handleSubmit: PropTypes.func.isRequired,
+  isSubmitting: PropTypes.bool.isRequired,
+};
+
 const withForm = withFormik({
   validationSchema: yup.object().shape({
     name: yup.string().required(),
-    players: yup.number().required().min(2).max(5),
+    players: yup
+      .number()
+      .required()
+      .min(2)
+      .max(5),
     protected: yup.boolean().default(() => false),
     password: yup.string(),
-    unlisted: yup.boolean().required()
+    unlisted: yup.boolean().required(),
   }),
   handleSubmit(values, { props, setSubmitting, setErrors }) {
     props.createGame(
-      _.pickBy(_.omit(values, ['protected']), v => v !== ''),
+      _.pickBy(_.omit(values, ['protected']), (v) => v !== ''),
       () => {
         setSubmitting(false);
       },
-      apiError => {
+      () => {
         setErrors({});
-      }
+      },
     );
-  }
+  },
 });
 
 const CreateGameForm = withForm(CreateGameInnerForm);
@@ -132,15 +162,16 @@ const CreateGamePage = ({ createGame }) => (
       createGame={createGame}
     />
   </article>
-)
+);
+
+CreateGamePage.propTypes = {
+  createGame: PropTypes.func.isRequired,
+};
 
 const mapDispatchToProps = {
-  createGame,
+  createGame: ApiActions.createGame,
 };
 
 const withConnect = connect(undefined, mapDispatchToProps);
 
-export default compose(
-  withForm,
-  withConnect,
-)(CreateGamePage);
+export default compose(withForm, withConnect)(CreateGamePage);

@@ -1,7 +1,6 @@
 import { syncAction } from 'features/sync/actions';
 
 import {
-  JOIN_GAME,
   FAILED_TO_CONNECT,
   SEND_CHAT_MESSAGE,
   RECEIVE_CHAT_MESSAGE,
