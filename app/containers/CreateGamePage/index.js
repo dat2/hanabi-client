@@ -5,9 +5,8 @@ import { compose } from 'redux';
 import { withFormik } from 'formik';
 import yup from 'yup';
 import cx from 'classnames';
-import _ from 'lodash';
 
-import * as ApiActions from 'features/api/actions';
+import * as GamesActions from 'features/games/actions';
 
 const CreateGameInnerForm = ({
   values,
@@ -117,7 +116,13 @@ CreateGameInnerForm.propTypes = {
     password: PropTypes.string,
     unlisted: PropTypes.string,
   }),
-  touched: PropTypes.bool.isRequired,
+  touched: PropTypes.shape({
+    name: PropTypes.bool,
+    players: PropTypes.bool,
+    protected: PropTypes.bool,
+    password: PropTypes.bool,
+    unlisted: PropTypes.bool,
+  }),
   handleChange: PropTypes.func.isRequired,
   handleBlur: PropTypes.func.isRequired,
   handleSubmit: PropTypes.func.isRequired,
@@ -138,7 +143,7 @@ const withForm = withFormik({
   }),
   handleSubmit(values, { props, setSubmitting, setErrors }) {
     props.createGame(
-      _.pickBy(_.omit(values, ['protected']), (v) => v !== ''),
+      values,
       () => {
         setSubmitting(false);
       },
@@ -169,9 +174,9 @@ CreateGamePage.propTypes = {
 };
 
 const mapDispatchToProps = {
-  createGame: ApiActions.createGame,
+  createGame: GamesActions.createGame,
 };
 
-const withConnect = connect(undefined, mapDispatchToProps);
+const enhance = compose(connect(undefined, mapDispatchToProps));
 
-export default compose(withForm, withConnect)(CreateGamePage);
+export default enhance(CreateGamePage);

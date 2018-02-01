@@ -1,11 +1,6 @@
 import { call, put, select, take, takeEvery } from 'redux-saga/effects';
-import uuidv4 from 'uuid/v4';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
-
-import syncSaga from 'features/sync/saga';
-import { SYNC_ACTION } from 'features/sync/constants';
-import { JOIN_GAME_SUCCESS } from 'features/api/constants';
 
 import {
   SEND_CHAT_MESSAGE,
@@ -23,34 +18,6 @@ import {
   failedToConnect,
 } from './actions';
 import { selectPlayers } from './selectors';
-
-function* sendChatMessages(socket, channel) {
-  while (true) {
-    const sendAction = yield take(SEND_CHAT_MESSAGE);
-    const newMessageId = yield call(uuidv4);
-    const receiveAction = receiveChatMessage(
-      sendAction.payload.message,
-      newMessageId,
-    );
-    yield call(socket.emit, channel, { action: receiveAction });
-    yield put(receiveAction);
-  }
-}
-
-function* sendGameActions(socket, channel) {
-  while (true) {
-    const action = yield take(SYNC_ACTION);
-    yield call(socket.emit, channel, action.payload);
-    yield put(action.payload.action);
-  }
-}
-
-function* receiveAndPut(channel) {
-  while (true) {
-    const payload = yield take(channel);
-    yield put(payload.action);
-  }
-}
 
 function generateDeck() {
   const numberDistribution = [[1, 3], [2, 2], [3, 2], [4, 2], [5, 1]];
@@ -96,31 +63,7 @@ function* handlePlayerTurn() {
   yield put(setNextPlayer());
 }
 
-export default function* gameSaga() {
-  const action = yield take(JOIN_GAME_SUCCESS);
-  const gameId = action.payload.gameId;
-
-  try {
-    yield call(
-      syncSaga,
-      {
-        origin: process.env.WS_SERVER_ORIGIN,
-        path: '/ws',
-        namespace: `/games/${gameId}`,
-      },
-      [
-        { channel: 'chat', saga: sendChatMessages },
-        { channel: 'game', saga: sendGameActions },
-      ],
-      [
-        { channel: 'chat', saga: receiveAndPut },
-        { channel: 'game', saga: receiveAndPut },
-      ],
-    );
-  } catch (e) {
-    yield put(failedToConnect());
-  }
-
+export default function* hanabiSaga() {
   yield takeEvery(START_GAME, handleStartGame);
   yield takeEvery(
     [GIVE_COLOUR_INFO, GIVE_NUMBER_INFO, DISCARD, PLAY],

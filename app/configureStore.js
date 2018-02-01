@@ -4,12 +4,30 @@
 
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { fromJS } from 'immutable';
 import { routerMiddleware } from 'react-router-redux';
 import createSagaMiddleware from 'redux-saga';
-import Cookies from 'js-cookie';
-import { createCookieMiddleware } from 'redux-cookie';
+import { reactReduxFirebase } from 'react-redux-firebase';
+import { reduxFirestore } from 'redux-firestore';
+import firebase from 'firebase';
+import 'firebase/firestore';
+
 import createReducer from './reducers';
+
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
+  databaseURL: process.env.FIREBASE_DATABASE_URL,
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
+};
+
+const rrfConfig = {
+  userProfile: 'users',
+  useFirestoreForProfile: true,
+};
+
+firebase.initializeApp(firebaseConfig);
 
 const sagaMiddleware = createSagaMiddleware();
 
@@ -17,13 +35,13 @@ export default function configureStore(initialState = {}, history) {
   // Create the store with two middlewares
   // 1. sagaMiddleware: Makes redux-sagas work
   // 2. routerMiddleware: Syncs the location/URL path to the state
-  const middlewares = [
-    sagaMiddleware,
-    routerMiddleware(history),
-    createCookieMiddleware(Cookies),
-  ];
+  const middlewares = [sagaMiddleware, routerMiddleware(history)];
 
-  const enhancers = [applyMiddleware(...middlewares)];
+  const enhancers = [
+    applyMiddleware(...middlewares),
+    reactReduxFirebase(firebase, rrfConfig),
+    reduxFirestore(firebase),
+  ];
 
   const composeEnhancers = composeWithDevTools({
     // TODO Try to remove when `react-router-redux` is out of beta, LOCATION_CHANGE should not be fired more than once after hot reloading
@@ -33,7 +51,7 @@ export default function configureStore(initialState = {}, history) {
 
   const store = createStore(
     createReducer(),
-    fromJS(initialState),
+    initialState,
     composeEnhancers(...enhancers),
   );
 

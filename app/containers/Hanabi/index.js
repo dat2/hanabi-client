@@ -4,77 +4,47 @@ import { connect } from 'react-redux';
 import { compose, bindActionCreators } from 'redux';
 import { createStructuredSelector } from 'reselect';
 import { lifecycle, withState } from 'recompose';
+import { firestoreConnect } from 'react-redux-firebase';
 
 import injectReducer from 'utils/injectReducer';
 import injectSaga from 'utils/injectSaga';
 import Player from 'components/Player';
-import { joinGame } from 'features/api/actions';
-import * as Actions from 'features/game/actions';
-import { selectMessages, selectPlayers } from 'features/game/selectors';
-import reducer from 'features/game/reducer';
-import saga from 'features/game/saga';
+import * as Actions from 'features/hanabi/actions';
+import { selectMessages, selectPlayers } from 'features/hanabi/selectors';
+import reducer from 'features/hanabi/reducer';
+import saga from 'features/hanabi/saga';
 
-export function Hanabi({
-  message,
-  setMessage,
-  sendChatMessage,
-  messages,
-  players,
-  startGame,
-}) {
+export function Hanabi({ message, setMessage, game }) {
   return (
     <article>
       <div>
         <input value={message} onChange={(e) => setMessage(e.target.value)} />
-        <button onClick={() => sendChatMessage(message)}>Send message</button>
-        <button onClick={() => startGame()}>Start game</button>
       </div>
+      <pre>{JSON.stringify(game, null, 2)}</pre>
+      {/*
       <ul>{messages.map((m) => <li key={m.id}>{m.message}</li>)}</ul>
       {players.map((player) => <Player key={player.name} {...player} />)}
+      */}
     </article>
   );
 }
 
 Hanabi.propTypes = {
-  sendChatMessage: PropTypes.func.isRequired,
   message: PropTypes.string.isRequired,
   setMessage: PropTypes.func.isRequired,
-  messages: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      message: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-  players: PropTypes.array.isRequired,
-  startGame: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch, { match: { params: { gameId } } }) =>
-  bindActionCreators(
-    {
-      sendChatMessage: Actions.sendChatMessage,
-      startGame: Actions.startGame,
-      giveColourInfo: Actions.giveColourInfo,
-      giveNumberInfo: Actions.giveNumberInfo,
-      discard: Actions.discard,
-      joinGame: () => joinGame(gameId),
-    },
-    dispatch,
-  );
-
-const mapStateToProps = createStructuredSelector({
-  messages: selectMessages,
-  players: selectPlayers,
+const mapStateToProps = (
+  { firestore: { data } },
+  { match: { params: { gameId } } },
+) => ({
+  game: data.games[gameId],
 });
 
 export default compose(
   injectReducer({ key: 'hanabi', reducer }),
   injectSaga({ key: 'hanabi', saga }),
-  connect(mapStateToProps, mapDispatchToProps),
+  firestoreConnect((props) => [`games/${props.match.params.gameId}`]),
+  connect(mapStateToProps),
   withState('message', 'setMessage', ''),
-  lifecycle({
-    componentDidMount() {
-      this.props.joinGame();
-    },
-  }),
 )(Hanabi);

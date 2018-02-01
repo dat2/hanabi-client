@@ -1,6 +1,7 @@
 /**
  * COMMON WEBPACK CONFIGURATION
  */
+require('dotenv').config();
 
 const path = require('path');
 const webpack = require('webpack');
@@ -98,14 +99,20 @@ module.exports = (options) => ({
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: JSON.stringify(process.env.NODE_ENV),
-        API_SERVER_ORIGIN:
-          process.env.NODE_ENV === 'development'
-            ? "'http://localhost:4000'"
-            : `'${process.env.API_SERVER_ORIGIN}'`,
-        WS_SERVER_ORIGIN:
-          process.env.NODE_ENV === 'development'
-            ? "'ws://localhost:5000'"
-            : `'${process.env.WS_SERVER_ORIGIN}'`,
+        API_SERVER_ORIGIN: JSON.stringify(process.env.API_SERVER_ORIGIN),
+        WS_SERVER_ORIGIN: JSON.stringify(process.env.WS_SERVER_ORIGIN),
+        FIREBASE_API_KEY: JSON.stringify(process.env.FIREBASE_API_KEY),
+        FIREBASE_AUTH_DOMAIN: JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
+        FIREBASE_DATABASE_URL: JSON.stringify(
+          process.env.FIREBASE_DATABASE_URL,
+        ),
+        FIREBASE_PROJECT_ID: JSON.stringify(process.env.FIREBASE_PROJECT_ID),
+        FIREBASE_STORAGE_BUCKET: JSON.stringify(
+          process.env.FIREBASE_STORAGE_BUCKET,
+        ),
+        FIREBASE_MESSAGING_SENDER_ID: JSON.stringify(
+          process.env.FIREBASE_MESSAGING_SENDER_ID,
+        ),
       },
     }),
     new webpack.NamedModulesPlugin(),
@@ -117,5 +124,8 @@ module.exports = (options) => ({
   },
   devtool: options.devtool,
   target: 'web', // Make web variables accessible to webpack, e.g. window
+  node: {
+    fs: 'empty',
+  },
   performance: options.performance || {},
 });

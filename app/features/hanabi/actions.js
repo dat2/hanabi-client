@@ -1,5 +1,3 @@
-import { syncAction } from 'features/sync/actions';
-
 import {
   FAILED_TO_CONNECT,
   SEND_CHAT_MESSAGE,
@@ -44,45 +42,45 @@ export function startGame() {
 }
 
 export function initializeGame(deck, playerHands) {
-  return syncAction({
+  return {
     type: INITIALIZE_GAME,
     payload: { deck, playerHands },
-  });
+  };
 }
 
 export function endGame() {
-  return syncAction({
+  return {
     type: END_GAME,
     payload: {},
-  });
+  };
 }
 
 export function giveColourInfo(colour, playerIndex) {
-  return syncAction({
+  return {
     type: GIVE_COLOUR_INFO,
     payload: { colour, playerIndex },
-  });
+  };
 }
 
 export function giveNumberInfo(number, playerIndex) {
-  return syncAction({
+  return {
     type: GIVE_NUMBER_INFO,
     payload: { number, playerIndex },
-  });
+  };
 }
 
 export function discard(cardIndex) {
-  return syncAction({
+  return {
     type: DISCARD,
     payload: { cardIndex },
-  });
+  };
 }
 
 export function play(cardIndex) {
-  return syncAction({
+  return {
     type: PLAY,
     payload: { cardIndex },
-  });
+  };
 }
 
 export function dealCard() {

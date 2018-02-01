@@ -5,11 +5,7 @@ import FontAwesomeIcon from '@fortawesome/react-fontawesome';
 import { faLock } from '@fortawesome/fontawesome-free-solid';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { lifecycle } from 'recompose';
-import { createStructuredSelector } from 'reselect';
-
-import * as ApiActions from 'features/api/actions';
-import { selectGames } from 'features/api/selectors';
+import { firestoreConnect } from 'react-redux-firebase';
 
 const HomePage = ({ games }) => (
   <article className="mw6 center">
@@ -20,11 +16,9 @@ const HomePage = ({ games }) => (
         {games.map((game) => (
           <tr key={game.id} className="striped--light-gray">
             <td className="pv2 ph3">{game.name}</td>
+            <td className="pv2 ph3">0 / {game.players}</td>
             <td className="pv2 ph3">
-              {game.players.length} / {game.max_players}
-            </td>
-            <td className="pv2 ph3">
-              {game.password ? <FontAwesomeIcon icon={faLock} /> : null}
+              {game.protected ? <FontAwesomeIcon icon={faLock} /> : null}
             </td>
             <td className="pv2 ph3">
               <Link to={`/games/${game.id}`}>Join</Link>
@@ -41,26 +35,27 @@ HomePage.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      players: PropTypes.array.isRequired,
-      max_players: PropTypes.number.isRequired,
+      players: PropTypes.number.isRequired,
+      protected: PropTypes.bool.isRequired,
       password: PropTypes.string,
     }),
-  ).isRequired,
+  ),
 };
 
-const mapStateToProps = createStructuredSelector({
-  games: selectGames,
+HomePage.defaultProps = {
+  games: [],
+};
+
+const mapStateToProps = ({ firestore: { ordered } }) => ({
+  games: ordered.games,
 });
 
-const mapDispatchToProps = {
-  fetchGames: ApiActions.fetchGames,
-};
-
 export default compose(
-  connect(mapStateToProps, mapDispatchToProps),
-  lifecycle({
-    componentDidMount() {
-      this.props.fetchGames();
+  firestoreConnect([
+    {
+      collection: 'games',
+      where: ['unlisted', '==', false],
     },
-  }),
+  ]),
+  connect(mapStateToProps),
 )(HomePage);

@@ -5,24 +5,24 @@ import { push, replace } from 'react-router-redux';
 import { compose } from 'redux';
 import { connect } from 'react-redux';
 import { lifecycle } from 'recompose';
-import { getCookie } from 'redux-cookie';
+import { withFirestore, isLoaded } from 'react-redux-firebase';
 
-import HomePage from 'containers/HomePage/Loadable';
-import SetNamePage from 'containers/SetNamePage/Loadable';
-import CreateGamePage from 'containers/CreateGamePage/Loadable';
-import Hanabi from 'containers/Hanabi/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
+import CreateGamePage from 'containers/CreateGamePage/Loadable';
+import HomePage from 'containers/HomePage/Loadable';
+import Hanabi from 'containers/Hanabi/Loadable';
 import injectSaga from 'utils/injectSaga';
-import injectReducer from 'utils/injectReducer';
-import apiSaga from 'features/api/saga';
-import apiReducer from 'features/api/reducer';
+import { DAEMON } from 'utils/constants';
+
+import gamesSaga from 'features/games/saga';
+import userSaga from 'features/user/saga';
+import { login } from 'features/user/actions';
 
 function App() {
   return (
     <main>
       <Switch>
         <Route exact path="/" component={HomePage} />
-        <Route path="/set-name" component={SetNamePage} />
         <Route path="/create" component={CreateGamePage} />
         <Route path="/games/:gameId" component={Hanabi} />
         <Route component={NotFoundPage} />
@@ -31,29 +31,32 @@ function App() {
   );
 }
 
+const mapStateToProps = ({ firebase: { profile } }) => ({
+  profile,
+});
+
 const mapDispatchToProps = {
-  getCookie,
   push,
   replace,
+  login,
 };
 
 export default compose(
   withRouter,
-  injectSaga({ key: 'api', saga: apiSaga }),
-  injectReducer({ key: 'api', reducer: apiReducer }),
-  connect(undefined, mapDispatchToProps),
+  withFirestore,
+  injectSaga({ key: 'user', saga: userSaga }),
+  injectSaga({ key: 'games', saga: gamesSaga, mode: DAEMON }),
+  connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {
-      const name = this.props.getCookie('name');
-      if (!name) {
-        this.props.push({
-          pathname: '/set-name',
-          state: { from: this.props.location.pathname },
-        });
-      } else {
-        this.props.replace({
-          pathname: '/',
-        });
+      this.props.login({
+        email: 'nickdujay@gmail.com',
+        password: 'abc123',
+      });
+    },
+    componentWillReceiveProps(nextProps) {
+      if (!isLoaded(this.props.profile) && isLoaded(nextProps.profile)) {
+        // TODO redirect to create user page
       }
     },
   }),
