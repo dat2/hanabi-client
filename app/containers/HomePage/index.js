@@ -6,10 +6,14 @@ import { compose } from 'redux';
 import { firestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase';
 import FaLock from 'react-icons/lib/fa/lock';
 
-const HomePage = ({ auth, games }) => (
+const HomePage = ({ auth, games, profile }) => (
   <article className="mw6 center">
     {isLoaded(auth) && isEmpty(auth) && <Redirect to="/login" />}
-    <Link to="/create">Create New Game</Link>
+    <div className="flex pa1">
+      <p className="ma0">Hello, {profile.displayName}</p>
+      <div className="flex-grow-1" />
+      <Link to="/create">Create New Game</Link>
+    </div>
     <hr className="bb b--black-05" />
     <table className="w-100 pv2 ph3">
       <tbody>
@@ -41,15 +45,22 @@ HomePage.propTypes = {
       password: PropTypes.string,
     }),
   ),
+  profile: PropTypes.shape({
+    displayName: PropTypes.string,
+  }).isRequired,
 };
 
 HomePage.defaultProps = {
   games: [],
 };
 
-const mapStateToProps = ({ firebase: { auth }, firestore: { ordered } }) => ({
+const mapStateToProps = ({
+  firebase: { auth, profile },
+  firestore: { ordered },
+}) => ({
   auth,
   games: ordered.games,
+  profile,
 });
 
 export default compose(

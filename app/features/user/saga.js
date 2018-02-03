@@ -1,13 +1,32 @@
 import { takeEvery, call, put } from 'redux-saga/effects';
 import { replace } from 'react-router-redux';
 
-import { LOGIN, SET_DISPLAY_NAME } from './constants';
+import { REGISTER, LOGIN, SET_DISPLAY_NAME } from './constants';
 import {
+  registerSuccess,
+  registerFailed,
   loginSuccess,
   loginFailed,
+  setDisplayName,
   setDisplayNameSuccess,
   setDisplayNameFailed,
 } from './actions';
+
+function* registerFirebase(
+  firebase,
+  { payload: { username, email, password, onSuccess, onFail } },
+) {
+  try {
+    yield call(firebase.createUser, { email, password });
+    yield put(registerSuccess());
+    yield call(onSuccess);
+    yield put(setDisplayName(username));
+    yield put(replace('/'));
+  } catch (e) {
+    yield put(registerFailed(e));
+    yield call(onFail, e);
+  }
+}
 
 function* loginFirebase(
   firebase,
@@ -34,6 +53,7 @@ function* setDisplayNameFirebase(firebase, { payload: { displayName } }) {
 }
 
 export default function* userSaga({ firebase }) {
+  yield takeEvery(REGISTER, registerFirebase, firebase);
   yield takeEvery(LOGIN, loginFirebase, firebase);
   yield takeEvery(SET_DISPLAY_NAME, setDisplayNameFirebase, firebase);
 }

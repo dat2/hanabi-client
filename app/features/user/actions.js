@@ -1,4 +1,7 @@
 import {
+  REGISTER,
+  REGISTER_SUCCESS,
+  REGISTER_FAILED,
   LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAILED,
@@ -6,6 +9,25 @@ import {
   SET_DISPLAY_NAME_SUCCESS,
   SET_DISPLAY_NAME_FAILED,
 } from './constants';
+
+export function register({ username, email, password }, onSuccess, onFail) {
+  return {
+    type: REGISTER,
+    payload: { username, email, password, onSuccess, onFail },
+  };
+}
+
+export function registerSuccess() {
+  return {
+    type: REGISTER_SUCCESS,
+  };
+}
+
+export function registerFailed() {
+  return {
+    type: REGISTER_FAILED,
+  };
+}
 
 export function login({ email, password }, onSuccess, onFail) {
   return {

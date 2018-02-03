@@ -8,6 +8,7 @@ import { withFirestore } from 'react-redux-firebase';
 import ErrorBoundary from 'components/ErrorBoundary';
 import HomePage from 'containers/HomePage/Loadable';
 import LoginPage from 'containers/LoginPage/Loadable';
+import RegisterPage from 'containers/RegisterPage/Loadable';
 import CreateGamePage from 'containers/CreateGamePage/Loadable';
 import Hanabi from 'containers/Hanabi/Loadable';
 import NotFoundPage from 'containers/NotFoundPage/Loadable';
@@ -23,6 +24,7 @@ function App({ location }) {
         <Switch location={location}>
           <Route exact path="/" component={HomePage} />
           <Route path="/login" component={LoginPage} />
+          <Route path="/register" component={RegisterPage} />
           <Route path="/create" component={CreateGamePage} />
           <Route path="/games/:gameId" component={Hanabi} />
           <Route component={NotFoundPage} />

@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
+import { Link } from 'react-router-dom';
 import { withFormik } from 'formik';
 import yup from 'yup';
 
@@ -16,52 +17,57 @@ const LoginInnerForm = ({
   handleSubmit,
   isSubmitting,
 }) => (
-  <form onSubmit={handleSubmit} className="measure center pa2">
-    <fieldset className="b--transparent ph0 mh0">
-      <legend className="f4 fw6">Login</legend>
-      <div className="mt3">
-        <label className="db fw6 lh-copy f6" htmlFor="email">
-          Email
-        </label>
-        <input
-          type="email"
-          name="email"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.email}
-          className="pa2 ba w-100"
-        />
-      </div>
-      {touched.email &&
-        errors.email && (
-          <div className="mt3 pa2 bg-light-red">{errors.email}</div>
-        )}
-      <div className="mt3">
-        <label className="db fw6 lh-copy f6" htmlFor="password">
-          Password
-        </label>
-        <input
-          type="password"
-          name="password"
-          onChange={handleChange}
-          onBlur={handleBlur}
-          value={values.password}
-          className="pa2 ba w-100"
-        />
-      </div>
-      {touched.password &&
-        errors.password && (
-          <div className="mt3 pa2 bg-light-red">{errors.password}</div>
-        )}
-    </fieldset>
-    <button
-      type="submit"
-      disabled={isSubmitting}
-      className="ph3 pv2 ba b--black grow pointer dib"
-    >
-      Login
-    </button>
-  </form>
+  <article className="measure center pa2">
+    <form onSubmit={handleSubmit} className="pa2">
+      <fieldset className="b--transparent ph0 mh0">
+        <legend className="f4 fw6">Login</legend>
+        <div className="mt3">
+          <label className="db fw6 lh-copy f6" htmlFor="email">
+            Email
+          </label>
+          <input
+            type="email"
+            name="email"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.email}
+            className="pa2 ba w-100"
+          />
+        </div>
+        {touched.email &&
+          errors.email && (
+            <div className="mt3 pa2 bg-light-red">{errors.email}</div>
+          )}
+        <div className="mt3">
+          <label className="db fw6 lh-copy f6" htmlFor="password">
+            Password
+          </label>
+          <input
+            type="password"
+            name="password"
+            onChange={handleChange}
+            onBlur={handleBlur}
+            value={values.password}
+            className="pa2 ba w-100"
+          />
+        </div>
+        {touched.password &&
+          errors.password && (
+            <div className="mt3 pa2 bg-light-red">{errors.password}</div>
+          )}
+      </fieldset>
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="ph3 pv2 ba b--black grow pointer dib"
+      >
+        Login
+      </button>
+    </form>
+    <Link className="pa2" to="/register">
+      Create a new account
+    </Link>
+  </article>
 );
 
 LoginInnerForm.propTypes = {
