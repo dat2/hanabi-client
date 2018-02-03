@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
-import { firestoreConnect } from 'react-redux-firebase';
+import { firestoreConnect, isLoaded, isEmpty } from 'react-redux-firebase';
 import FaLock from 'react-icons/lib/fa/lock';
 
-const HomePage = ({ games }) => (
+const HomePage = ({ auth, games }) => (
   <article className="mw6 center">
+    {isLoaded(auth) && isEmpty(auth) && <Redirect to="/login" />}
     <Link to="/create">Create New Game</Link>
     <hr className="bb b--black-05" />
     <table className="w-100 pv2 ph3">
@@ -30,6 +31,7 @@ const HomePage = ({ games }) => (
 );
 
 HomePage.propTypes = {
+  auth: PropTypes.object.isRequired,
   games: PropTypes.arrayOf(
     PropTypes.shape({
       id: PropTypes.string.isRequired,
@@ -45,7 +47,8 @@ HomePage.defaultProps = {
   games: [],
 };
 
-const mapStateToProps = ({ firestore: { ordered } }) => ({
+const mapStateToProps = ({ firebase: { auth }, firestore: { ordered } }) => ({
+  auth,
   games: ordered.games,
 });
 

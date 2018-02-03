@@ -3,9 +3,9 @@ import PropTypes from 'prop-types';
 
 import Card from 'components/Card';
 
-const Player = ({ name, hand }) => (
+const Player = ({ displayName, hand }) => (
   <div>
-    <p>{name}</p>
+    <p>{displayName}</p>
     {hand.map((card) => (
       <Card key={`${card.number} ${card.colour}`} {...card} />
     ))}
@@ -13,7 +13,7 @@ const Player = ({ name, hand }) => (
 );
 
 Player.propTypes = {
-  name: PropTypes.string.isRequired,
+  displayName: PropTypes.string.isRequired,
   hand: PropTypes.arrayOf(PropTypes.shape(Card.propTypes)).isRequired,
 };
 

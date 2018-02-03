@@ -2,15 +2,15 @@ import {
   LOGIN,
   LOGIN_SUCCESS,
   LOGIN_FAILED,
-  SET_NAME,
-  SET_NAME_SUCCESS,
-  SET_NAME_FAILED,
+  SET_DISPLAY_NAME,
+  SET_DISPLAY_NAME_SUCCESS,
+  SET_DISPLAY_NAME_FAILED,
 } from './constants';
 
-export function login({ email, password }) {
+export function login({ email, password }, onSuccess, onFail) {
   return {
     type: LOGIN,
-    payload: { email, password },
+    payload: { email, password, onSuccess, onFail },
   };
 }
 
@@ -26,22 +26,22 @@ export function loginFailed() {
   };
 }
 
-export function setName(name) {
+export function setDisplayName(displayName) {
   return {
-    type: SET_NAME,
-    payload: { name },
+    type: SET_DISPLAY_NAME,
+    payload: { displayName },
   };
 }
 
-export function setNameSuccess(name) {
+export function setDisplayNameSuccess(displayName) {
   return {
-    type: SET_NAME_SUCCESS,
-    payload: { name },
+    type: SET_DISPLAY_NAME_SUCCESS,
+    payload: { displayName },
   };
 }
 
-export function setNameFailed() {
+export function setDisplayNameFailed() {
   return {
-    type: SET_NAME_FAILED,
+    type: SET_DISPLAY_NAME_FAILED,
   };
 }
