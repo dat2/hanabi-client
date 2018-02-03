@@ -38,21 +38,21 @@ const CreateGameInnerForm = ({
           <div className="mt3 pa2 bg-light-red">{errors.name}</div>
         )}
       <div className="mt3">
-        <label className="db fw6 lh-copy f6" htmlFor="players">
+        <label className="db fw6 lh-copy f6" htmlFor="maxPlayers">
           Number of Players
         </label>
         <input
           type="number"
-          name="players"
+          name="maxPlayers"
           onChange={handleChange}
           onBlur={handleBlur}
-          value={values.players}
+          value={values.maxPlayers}
           className="pa2 ba w-100"
         />
       </div>
-      {touched.players &&
-        errors.players && (
-          <div className="mt3 pa2 bg-light-red">{errors.players}</div>
+      {touched.maxPlayers &&
+        errors.maxPlayers && (
+          <div className="mt3 pa2 bg-light-red">{errors.maxPlayers}</div>
         )}
       <div className="mt3">
         <input
@@ -104,21 +104,21 @@ const CreateGameInnerForm = ({
 CreateGameInnerForm.propTypes = {
   values: PropTypes.shape({
     name: PropTypes.string.isRequired,
-    players: PropTypes.number.isRequired,
+    maxPlayers: PropTypes.number.isRequired,
     protected: PropTypes.bool.isRequired,
     password: PropTypes.string.isRequired,
     unlisted: PropTypes.bool.isRequired,
   }).isRequired,
   errors: PropTypes.shape({
     name: PropTypes.string,
-    players: PropTypes.string,
+    maxPlayers: PropTypes.string,
     protected: PropTypes.string,
     password: PropTypes.string,
     unlisted: PropTypes.string,
   }),
   touched: PropTypes.shape({
     name: PropTypes.bool,
-    players: PropTypes.bool,
+    maxPlayers: PropTypes.bool,
     protected: PropTypes.bool,
     password: PropTypes.bool,
     unlisted: PropTypes.bool,
@@ -132,7 +132,7 @@ CreateGameInnerForm.propTypes = {
 const withForm = withFormik({
   validationSchema: yup.object().shape({
     name: yup.string().required(),
-    players: yup
+    maxPlayers: yup
       .number()
       .required()
       .min(2)
@@ -160,7 +160,7 @@ const CreateGamePage = ({ createGame }) => (
   <article className="w-100 h-100 black-80">
     <CreateGameForm
       name=""
-      players={5}
+      maxPlayers={5}
       protected={false}
       password=""
       unlisted={false}

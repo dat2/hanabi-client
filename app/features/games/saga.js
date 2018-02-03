@@ -1,15 +1,8 @@
 import { select, takeEvery, call, put } from 'redux-saga/effects';
 import { replace } from 'react-router-redux';
 
-import { FETCH_GAMES, CREATE_GAME, JOIN_GAME } from './constants';
-import {
-  fetchGamesSuccess,
-  fetchGamesFailed,
-  createGameSuccess,
-  createGameFailed,
-  joinGameSuccess,
-  joinGameFailed,
-} from './actions';
+import { CREATE_GAME } from './constants';
+import { createGameSuccess, createGameFailed } from './actions';
 
 function* createGameSaga(
   firestore,
@@ -23,41 +16,18 @@ function* createGameSaga(
       {
         creator: uid,
         ...values,
+        players: [],
       },
     );
     yield put(createGameSuccess());
     yield call(onCreate);
     yield put(replace(`/games/${response.id}`));
   } catch (e) {
-    console.error(e);
     yield put(createGameFailed(e));
     yield call(onError, e);
   }
 }
 
-function* fetchGamesSaga() {
-  try {
-    yield put(fetchGamesSuccess(response.games));
-  } catch (e) {
-    yield put(fetchGamesFailed());
-  }
-}
-
-function* joinGameSaga({ payload: { gameId } }) {
-  try {
-    yield call(
-      request,
-      `${process.env.API_SERVER_ORIGIN}/api/games/${gameId}/join`,
-      { method: 'POST', credentials: 'include' },
-    );
-    yield put(joinGameSuccess(gameId));
-  } catch (e) {
-    yield put(joinGameFailed(e));
-  }
-}
-
 export default function* gamesSaga({ firestore }) {
   yield takeEvery(CREATE_GAME, createGameSaga, firestore);
-  // yield takeEvery(FETCH_GAMES, fetchGamesSaga);
-  // yield takeEvery(JOIN_GAME, joinGameSaga);
 }

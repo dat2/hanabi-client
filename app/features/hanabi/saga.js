@@ -1,22 +1,15 @@
-import { call, put, select, take, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import * as R from 'ramda';
 import shuffle from 'shuffle-array';
 
 import {
-  SEND_CHAT_MESSAGE,
   START_GAME,
   GIVE_COLOUR_INFO,
   GIVE_NUMBER_INFO,
   DISCARD,
   PLAY,
 } from './constants';
-import {
-  initializeGame,
-  receiveChatMessage,
-  dealCard,
-  setNextPlayer,
-  failedToConnect,
-} from './actions';
+import { initializeGame, dealCard, setNextPlayer } from './actions';
 import { selectPlayers } from './selectors';
 
 function generateDeck() {

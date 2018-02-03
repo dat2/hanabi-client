@@ -7,12 +7,13 @@ import { connect } from 'react-redux';
 import { lifecycle } from 'recompose';
 import { withFirestore, isLoaded } from 'react-redux-firebase';
 
-import NotFoundPage from 'containers/NotFoundPage/Loadable';
-import CreateGamePage from 'containers/CreateGamePage/Loadable';
+import ErrorBoundary from 'components/ErrorBoundary';
 import HomePage from 'containers/HomePage/Loadable';
+import SignUpPage from 'containers/SignUpPage/Loadable';
+import CreateGamePage from 'containers/CreateGamePage/Loadable';
 import Hanabi from 'containers/Hanabi/Loadable';
+import NotFoundPage from 'containers/NotFoundPage/Loadable';
 import injectSaga from 'utils/injectSaga';
-import { DAEMON } from 'utils/constants';
 
 import gamesSaga from 'features/games/saga';
 import userSaga from 'features/user/saga';
@@ -20,14 +21,17 @@ import { login } from 'features/user/actions';
 
 function App() {
   return (
-    <main>
-      <Switch>
-        <Route exact path="/" component={HomePage} />
-        <Route path="/create" component={CreateGamePage} />
-        <Route path="/games/:gameId" component={Hanabi} />
-        <Route component={NotFoundPage} />
-      </Switch>
-    </main>
+    <ErrorBoundary>
+      <main>
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          <Route path="/signup" component={SignUpPage} />
+          <Route path="/create" component={CreateGamePage} />
+          <Route path="/games/:gameId" component={Hanabi} />
+          <Route component={NotFoundPage} />
+        </Switch>
+      </main>
+    </ErrorBoundary>
   );
 }
 
@@ -45,7 +49,7 @@ export default compose(
   withRouter,
   withFirestore,
   injectSaga({ key: 'user', saga: userSaga }),
-  injectSaga({ key: 'games', saga: gamesSaga, mode: DAEMON }),
+  injectSaga({ key: 'games', saga: gamesSaga }),
   connect(mapStateToProps, mapDispatchToProps),
   lifecycle({
     componentDidMount() {

@@ -1,11 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
-import FontAwesomeIcon from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/fontawesome-free-solid';
 import { connect } from 'react-redux';
 import { compose } from 'redux';
 import { firestoreConnect } from 'react-redux-firebase';
+import FaLock from 'react-icons/lib/fa/lock';
 
 const HomePage = ({ games }) => (
   <article className="mw6 center">
@@ -16,10 +15,10 @@ const HomePage = ({ games }) => (
         {games.map((game) => (
           <tr key={game.id} className="striped--light-gray">
             <td className="pv2 ph3">{game.name}</td>
-            <td className="pv2 ph3">0 / {game.players}</td>
             <td className="pv2 ph3">
-              {game.protected ? <FontAwesomeIcon icon={faLock} /> : null}
+              {game.players.length} / {game.maxPlayers}
             </td>
+            <td className="pv2 ph3">{game.protected ? <FaLock /> : null}</td>
             <td className="pv2 ph3">
               <Link to={`/games/${game.id}`}>Join</Link>
             </td>
@@ -35,7 +34,7 @@ HomePage.propTypes = {
     PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string.isRequired,
-      players: PropTypes.number.isRequired,
+      maxPlayers: PropTypes.number.isRequired,
       protected: PropTypes.bool.isRequired,
       password: PropTypes.string,
     }),
